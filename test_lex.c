@@ -139,7 +139,7 @@ int main(int argc, char **argv) {
       printf("Nombre d'identificateurs: %4d\n", nbIdent);
       return 0;
 
-    case CST:
+    case CSTE:
       /* ici on suppose qu'on a recupere la valeur de la constante, pas sa
        * representation sous forme de chaine de caracteres.
        */
