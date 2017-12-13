@@ -5,7 +5,6 @@
 %token<I> Cste
 %token<C> RelOp
 
-
 %{
 #include "tp.h"
 #include "tp_y.h"
