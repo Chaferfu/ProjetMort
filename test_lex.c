@@ -139,6 +139,49 @@ int main(int argc, char **argv) {
       printf("Nombre d'identificateurs: %4d\n", nbIdent);
       return 0;
 
+    case CST:
+      /* ici on suppose qu'on a recupere la valeur de la constante, pas sa
+       * representation sous forme de chaine de caracteres.
+       */
+      printf("Constante:\t\t%d\n", yylval.I);
+      break;
+
+    case OBJECT:
+      printf("class \n"); 
+      break;
+
+    case CLASS:
+      printf("class \n"); 
+      break;
+
+    case IS:
+      printf("Is \n"); 
+      break;
+
+    case DEF:
+      printf("Def \n"); 
+      break;
+
+    case EXTENDS :
+      printf("Extends \n");
+      break;
+    case OVERRIDE:
+      printf("Override \n");
+      break;
+
+    case NEWC:
+      printf("Newc \n");
+      break;
+
+      //Classes predefinies
+    case INTC:
+      printf("Intc \n");
+      break;
+    case STRINGC:
+      printf("Stringc \n");
+      break;
+
+
     case ID:
       makeIdent(yylineno, yylval.S);
       if (verbose) printf("Identificateur:\t\t%s\n", yylval.S);
@@ -150,70 +193,45 @@ int main(int argc, char **argv) {
       break;
 
 
-    case CST:
-      /* ici on suppose qu'on a recupere la valeur de la constante, pas sa
-       * representation sous forme de chaine de caracteres.
-       */
-      printf("Constante:\t\t%d\n", yylval.I);
+    case VOIDC:
+      printf("Voidc \n");
       break;
 
-
-
-    case CLASS:
-      printf("Affectation \n"); 
+    case THIS:
+      printf("This \n");
       break;
-    case EXTENDS :
-      printf("Affectation \n");
+    case SUPER:
+      printf("Super \n");
       break;
-    case OVERRIDE:
-      printf("Affectation \n");
-      break;
-
-    case AFF:
-      printf("Affectation \n");
-      break;
-    case AFF:
-      printf("Affectation \n");
-      break;
-    case AFF:
-      printf("Affectation \n");
-      break;
-    case AFF:
-      printf("Affectation \n");
-      break;
-
-//GO OOWOWWWWW
-      
-
-
-
-
 
     case AFF:
       printf("Affectation \n"); break;
-    case BEG: 
-      printf("BEGIN \n"); break;
-    case END:
-      printf("END \n"); break;
+
     case IF:
       printf("IF \n"); break;
     case THEN:
       printf("THEN \n"); break;
     case ELSE:
       printf("ELSE \n"); break;
+
+
     case '(':
     case ')':
-      /* a completer */
       if (verbose) printf("Symbole:\t%s\n",  yytext);
       break;
-    case '+':
+
+
+    case ADD:
       printf("addition\n"); break;
-    case '-':
+    case SUB:
       printf("soustraction\n"); break;
-    case '*':
+    case MULT:
      printf("multiplication\n"); break;
-    case '/':
+    case DIV:
       printf("division\n"); break;
+
+
+
     case RELOP:
       /* inutilement complique ici, mais sert a illustrer la difference
        * entre le token et l'infirmation supplementaire qu'on peut associer
@@ -230,8 +248,11 @@ int main(int argc, char **argv) {
       	}
       }
       break;
+
     case SEMIC:
       printf("$\n"); break;
+
+
     default:
       printf("Token non reconnu:\t\"%d\"\n", token);
     }
