@@ -5,6 +5,9 @@ LDFLAGS= -g -lfl
 tp : $(OBJ)
 	$(CC) -o tp $(OBJ) $(LDFLAGS)
 
+test_lex : tp_l.o test_lex.c tp_y.h tp.h
+	$(CC) $(CFLAGS) -Wno-unused-function -Wno-implicit-function-declaration -o test_lex test_lex.c  tp_l.o $(LDFLAGS)
+
 tp.c :
 	echo ''
 
@@ -32,5 +35,5 @@ tp_y.h tp_y.c : tp.y tp.h
 .Phony: clean
 
 clean:
-	rm -f *~ tp.exe* ./tp *.o tp_l.* tp_y.*
+	rm -f *~ tp.exe* ./tp *.o tp_l.* tp_y.* test_lex
 	rm -f test/*~ test/*.out test/*/*~ test/*/*.out
