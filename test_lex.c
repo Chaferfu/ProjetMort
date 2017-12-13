@@ -215,19 +215,20 @@ int main(int argc, char **argv) {
       printf("ELSE \n"); break;
 
 
+//symboles
     case '(':
     case ')':
       if (verbose) printf("Symbole:\t%s\n",  yytext);
       break;
 
 
-    case ADD:
+    case '+':
       printf("addition\n"); break;
-    case SUB:
+    case '-':
       printf("soustraction\n"); break;
-    case MULT:
+    case '*':
      printf("multiplication\n"); break;
-    case DIV:
+    case '/':
       printf("division\n"); break;
 
 
