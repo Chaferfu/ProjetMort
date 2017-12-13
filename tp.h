@@ -26,10 +26,22 @@ typedef unsigned char bool;
  */
 #define NE	1
 #define EQ	2
-#define LT	3
-#define LE	4
-#define GT	5
-#define GE	6
+#define INF	3
+#define INFE	4
+#define SUP	5
+#define SUPE	6
+
+#define ADD 7
+#define SUB 8
+#define MULT 9
+#define DIV 10
+#define SEMI 11
+
+#define ET 12
+#define DP 13
+#define VIRG 14
+#define POINT 15
+#define ANTISL 16
 
 
 
@@ -66,9 +78,9 @@ typedef struct _Tree {
 } Tree, *TreeP;
 
 
-typedef union
-      { char *S;
-        char C;
+typedef union { 
+  char *S;
+  char C;
 	int I;
 	TreeP pT;
 	VarDeclP pV; /* same comment as above */

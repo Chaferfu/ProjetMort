@@ -147,8 +147,14 @@ int main(int argc, char **argv) {
       break;
 
     case OBJECT:
-      printf("class \n"); 
+      printf("object \n"); 
       break;
+
+
+    case VAR:
+      printf("Var \n"); 
+      break;
+
 
     case CLASS:
       printf("class \n"); 
@@ -173,7 +179,7 @@ int main(int argc, char **argv) {
       printf("Newc \n");
       break;
 
-      //Classes predefinies
+      /*Classes predefinies*/
     case INTC:
       printf("Intc \n");
       break;
@@ -215,7 +221,11 @@ int main(int argc, char **argv) {
       printf("ELSE \n"); break;
 
 
-//symboles
+/*symboles*/
+    case '{':
+    case '}':
+    case '[':
+    case ']':
     case '(':
     case ')':
       if (verbose) printf("Symbole:\t%s\n",  yytext);
@@ -230,6 +240,15 @@ int main(int argc, char **argv) {
      printf("multiplication\n"); break;
     case '/':
       printf("division\n"); break;
+
+
+    case DP:
+    case POINT:
+    case VIRG:
+    case ANTISL:
+    case ET:
+      printf("Autres symboles : \t%s\n", yytext);
+      break;
 
 
 
@@ -250,12 +269,12 @@ int main(int argc, char **argv) {
       }
       break;
 
-    case SEMIC:
-      printf("$\n"); break;
+    case SEMI:
+      printf("point virgule ;\n"); break;
 
 
     default:
-      printf("Token non reconnu:\t\"%d\"\n", token);
+      printf("Token non reconnu:\t\"%d\" on ligne %d\n", token, yylineno);
     }
   }
 }

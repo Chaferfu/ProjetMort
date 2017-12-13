@@ -1,9 +1,9 @@
 /* attention: NEW est defini dans tp.h Utilisez un autre nom de token */
-/* test push git 2*/
-%token IS CLASS VAR EXTENDS DEF OVERRIDE IF THEN ELSE AFF
-%token<S> Id
-%token<I> Cste
-%token<C> RelOp
+%token IS CLASS VAR EXTENDS DEF OVERRIDE IF THEN ELSE AFF 
+%token OBJECT NEWC RETURN INTC STRINGC VOIDC
+%token<S> ID CLASSNAME SUPER THIS RESULT
+%token<I> CSTE
+%token<C> RELOP
 
 %{
 #include "tp.h"
