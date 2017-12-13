@@ -1,4 +1,5 @@
 /* attention: NEW est defini dans tp.h Utilisez un autre nom de token */
+/* test push git 2*/
 %token IS CLASS VAR EXTENDS DEF OVERRIDE IF THEN ELSE AFF
 %token<S> Id
 %token<I> Cste
