@@ -4,6 +4,7 @@
 %token<I> Cste
 %token<C> RelOp
 
+/*commentaire Minh*/
 
 %{
 #include "tp.h"
