@@ -5,6 +5,10 @@
 %token<I> CSTE
 %token<C> RELOP
 
+%left ADD SUB
+%left MULT DIV
+
+
 %{
 #include "tp.h"
 #include "tp_y.h"

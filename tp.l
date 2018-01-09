@@ -37,7 +37,7 @@ int keywordOrId() {
   if (! strcmp(yytext, "else")) return ELSE;
   if (! strcmp(yytext, "this")) return THIS;
   if (! strcmp(yytext, "super")) return SUPER;
-  if (! strcmp(yytext, "result")) return SUPER;
+  if (! strcmp(yytext, "result")) return RESULT;
   if (! strcmp(yytext, "new")) return NEWC;
   if (! strcmp(yytext, "return")) return RETURN;
   if (! strcmp(yytext, "object")) return OBJECT;
@@ -70,7 +70,6 @@ int quelSymbole()
   if (! strcmp(yytext, "\\")) return ANTISL;
   
   return(yytext[0]);
-
 }
 
 
