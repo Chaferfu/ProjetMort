@@ -43,8 +43,9 @@ int keywordOrId() {
   if (! strcmp(yytext, "object")) return OBJECT;
 
   yylval.S = strdup(yytext);
-  return(ID);
+  return(Id);
 }
+
 
 int keywordOrIdC() {
   if (! strcmp(yytext, "Integer")) return INTC;
@@ -52,14 +53,13 @@ int keywordOrIdC() {
   if (! strcmp(yytext, "Void")) return VOIDC;
 
 	yylval.S = strdup(yytext);
-	return(CLASSNAME);
+	return(Classname);
 }
-
 
 int quelSymbole()
 {
 
-  if (! strcmp(yytext, "&")) return ET;
+  if (! strcmp(yytext, "&")) return CONCAT;
 
   if (! strcmp(yytext, ":")) return DP;
 
@@ -68,6 +68,14 @@ int quelSymbole()
   if (! strcmp(yytext, ".")) return POINT;
 
   if (! strcmp(yytext, "\\")) return ANTISL;
+
+  if (! strcmp(yytext, "+")) return ADD;
+
+  if (! strcmp(yytext, "-")) return SUB;
+
+  if (! strcmp(yytext, "*")) return MULT;
+
+  if (! strcmp(yytext, "/")) return DIV;
   
   return(yytext[0]);
 }
@@ -83,15 +91,15 @@ void lexError(char c) {
 %}
 
 %%
-{Entier} 	{ yylval.I = atoi(yytext); return(CSTE); }
+{Entier} 	{ yylval.I = atoi(yytext); return(Cste); }
 {Symbole}	{ return quelSymbole(); }
 ":="		{ return(AFF); }
-"="		{ yylval.C = EQ; return(RELOP); }
-"<>"		{ yylval.C = NE; return(RELOP); }
-"<="		{ yylval.C = INFE; return(RELOP); }
-">="		{ yylval.C = SUPE; return(RELOP); }
-">"		{ yylval.C = SUP; return(RELOP); }
-"<"		{ yylval.C = INF; return(RELOP); }
+"="		{ yylval.C = EQ; return(RelOp); }
+"<>"		{ yylval.C = NE; return(RelOp); }
+"<="		{ yylval.C = INFE; return(RelOp); }
+">="		{ yylval.C = SUPE; return(RelOp); }
+">"		{ yylval.C = SUP; return(RelOp); }
+"<"		{ yylval.C = INF; return(RelOp); }
 
 "/*"({NotStar}|({Star}+{NotStarPar}))*{Star}*"*/"  { }
 {Delim}        { }

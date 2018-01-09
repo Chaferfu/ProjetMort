@@ -132,93 +132,101 @@ int main(int argc, char **argv) {
 
     case 0: /* EOF */
       printf("Fin de l'analyse lexicale\n");
-      printf("Liste des identificateurs avec leur premiere occurrence:\n");
+      if (verbose) printf("Liste des identificateurs avec leur premiere occurrence:\n");
       for (i = 0; i < nbIdent; i++) {
-        printf("ligne %d : %s\n", idents[i].line, idents[i].id);
+        if (verbose) printf("ligne %d : %s\n", idents[i].line, idents[i].id);
       }
       printf("Nombre d'identificateurs: %4d\n", nbIdent);
       return 0;
 
-    case CSTE:
+    case Cste:
       /* ici on suppose qu'on a recupere la valeur de la constante, pas sa
        * representation sous forme de chaine de caracteres.
        */
-      printf("Constante:\t\t%d\n", yylval.I);
+      if (verbose) printf("Constante:\t\t%d\n", yylval.I);
       break;
 
     case OBJECT:
-      printf("object \n"); 
+      if (verbose) printf("object \n"); 
       break;
 
 
     case VAR:
-      printf("Var \n"); 
+      if (verbose) printf("Var \n"); 
       break;
 
 
     case CLASS:
-      printf("class \n"); 
+      if (verbose) printf("class \n"); 
       break;
 
     case IS:
-      printf("Is \n"); 
+      if (verbose) printf("Is \n"); 
       break;
 
     case DEF:
-      printf("Def \n"); 
+      if (verbose) printf("Def \n"); 
       break;
 
     case EXTENDS :
-      printf("Extends \n");
+      if (verbose) printf("Extends \n");
       break;
     case OVERRIDE:
-      printf("Override \n");
+      if (verbose) printf("Override \n");
       break;
 
     case NEWC:
-      printf("Newc \n");
+      if (verbose) printf("Newc \n");
+      break;
+
+    case RESULT:
+      if (verbose) printf("Result \n");
+      break;
+
+    case RETURN:
+      if (verbose) printf("Return \n");
       break;
 
       /*Classes predefinies*/
     case INTC:
-      printf("Intc \n");
+      if (verbose) printf("Intc \n");
       break;
     case STRINGC:
-      printf("Stringc \n");
+      if (verbose) printf("Stringc \n");
       break;
 
 
-    case ID:
+    case Id:
       makeIdent(yylineno, yylval.S);
       if (verbose) printf("Identificateur:\t\t%s\n", yylval.S);
       break;
 
-    case CLASSNAME:
+    case Classname:
       makeIdent(yylineno, yylval.S);
       if (verbose) printf("Classname:\t\t%s\n", yylval.S);
       break;
 
 
     case VOIDC:
-      printf("Voidc \n");
+      if (verbose) printf("Voidc \n");
       break;
 
     case THIS:
-      printf("This \n");
+      if (verbose) printf("This \n");
       break;
     case SUPER:
-      printf("Super \n");
+      if (verbose) printf("Super \n");
       break;
 
     case AFF:
-      printf("Affectation \n"); break;
+      if (verbose) printf("Affectation \n"); break;
 
     case IF:
-      printf("IF \n"); break;
+      if (verbose) printf("IF \n"); break;
     case THEN:
-      printf("THEN \n"); break;
+      if (verbose) printf("THEN \n"); break;
     case ELSE:
-      printf("ELSE \n"); break;
+      if (verbose) printf("ELSE \n"); break;
 
 
 /*symboles*/
@@ -232,27 +240,27 @@ int main(int argc, char **argv) {
       break;
 
 
-    case '+':
-      printf("addition\n"); break;
-    case '-':
-      printf("soustraction\n"); break;
-    case '*':
-     printf("multiplication\n"); break;
-    case '/':
-      printf("division\n"); break;
+    case ADD:
+      if (verbose) printf("addition\n"); break;
+    case SUB:
+      if (verbose) printf("soustraction\n"); break;
+    case MULT:
+     if (verbose) printf("multiplication\n"); break;
+    case DIV:
+     if (verbose) printf("division\n"); break;
 
 
     case DP:
     case POINT:
     case VIRG:
     case ANTISL:
-    case ET:
-      printf("Autres symboles : \t%s\n", yytext);
+    case CONCAT:
+      if (verbose) printf("Autres symboles : \t%s\n", yytext);
       break;
 
 
 
-    case RELOP:
+    case RelOp:
       /* inutilement complique ici, mais sert a illustrer la difference
        * entre le token et l'infirmation supplementaire qu'on peut associer
        * via la valeur.
@@ -270,11 +278,11 @@ int main(int argc, char **argv) {
       break;
 
     case SEMI:
-      printf("point virgule ;\n"); break;
+      if (verbose) printf("point virgule ;\n"); break;
 
 
     default:
-      printf("Token non reconnu:\t\"%d\" on ligne %d\n", token, yylineno);
+      printf("############Token non reconnu:\t\"%d\" on ligne %d\n", token, yylineno);
     }
   }
 }

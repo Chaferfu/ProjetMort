@@ -1,117 +1,2159 @@
+Nonterminals useless in grammar
+
+   BlocLOpt
+   LBloc
+
+
 Terminals unused in grammar
 
-   IS
-   CLASS
-   VAR
-   EXTENDS
-   DEF
-   OVERRIDE
-   IF
-   THEN
-   ELSE
-   AFF
    OBJECT
-   NEWC
-   RETURN
-   INTC
-   STRINGC
-   VOIDC
-   ID
-   CLASSNAME
-   SUPER
-   THIS
-   RESULT
-   CSTE
-   RELOP
+   UNARY
+
+
+Rules useless in grammar
+
+   75 BlocLOpt: LBloc
+   76         | %empty
+
+   77 LBloc: Bloc LBloc
+   78      | %empty
+
+
+State 9 conflicts: 2 shift/reduce
+State 17 conflicts: 2 shift/reduce
+State 20 conflicts: 18 reduce/reduce
+State 25 conflicts: 9 shift/reduce
+State 26 conflicts: 9 shift/reduce
+State 27 conflicts: 2 shift/reduce
+State 32 conflicts: 2 shift/reduce
+State 48 conflicts: 2 shift/reduce
+State 50 conflicts: 2 shift/reduce
+State 53 conflicts: 9 shift/reduce
+State 54 conflicts: 9 shift/reduce
+State 55 conflicts: 9 shift/reduce
+State 56 conflicts: 9 shift/reduce
+State 57 conflicts: 9 shift/reduce
+State 62 conflicts: 2 shift/reduce
+State 68 conflicts: 2 shift/reduce
+State 69 conflicts: 9 shift/reduce, 1 reduce/reduce
+State 79 conflicts: 1 shift/reduce
+State 90 conflicts: 14 shift/reduce, 1 reduce/reduce
+State 95 conflicts: 9 shift/reduce, 1 reduce/reduce
+State 98 conflicts: 2 shift/reduce
+State 100 conflicts: 2 shift/reduce
+State 101 conflicts: 9 shift/reduce
+State 102 conflicts: 9 shift/reduce
+State 110 conflicts: 12 reduce/reduce
+State 111 conflicts: 12 reduce/reduce
+State 132 conflicts: 2 shift/reduce
 
 
 Grammar
 
     0 $accept: Prog $end
 
-    1 Prog: classLOpt block
+    1 Prog: classLOpt Bloc
 
-    2 classLOpt: %empty
+    2 classTete: CLASS Classname
 
-    3 block: %empty
+    3 classLOpt: Class classLOpt
+    4          | %empty
+
+    5 Class: classTete '(' paramLOpt ')' ExtendsOpt BlocOpt IS '{' DeclChampLOpt DeclMethodeLOpt '}'
+
+    6 paramLOpt: LParam
+    7          | %empty
+
+    8 LParam: Param ',' LParam
+    9       | Param
+
+   10 Param: Id ':' Classname
+
+   11 DeclChampLOpt: LDeclChamp
+   12              | %empty
+
+   13 LDeclChamp: DeclChamp ';' LDeclChamp
+   14           | DeclChamp
+
+   15 DeclChamp: VAR Id ':' TypeC AffOpt ';'
+
+   16 TypeC: INTC
+   17      | STRINGC
+   18      | VOIDC
+   19      | Classname
+
+   20 AffOpt: AFF Expr
+   21       | %empty
+
+   22 DeclMethodeLOpt: LDeclMethode
+   23                | %empty
+
+   24 LDeclMethode: DeclMethode ';' LDeclMethode
+   25             | DeclMethode
+
+   26 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' ':' TypeC AFF Expr
+   27            | OverrideOpt DEF Id '(' paramLOpt ')' TypeCOpt IS
+
+   28 TypeCOpt: ':' TypeC
+   29         | %empty
+
+   30 OverrideOpt: OVERRIDE
+   31            | %empty
+
+   32 ExtendsOpt: EXTENDS
+   33           | %empty
+
+   34 Expr: Id
+   35     | Cste
+   36     | '(' Expr ')'
+   37     | '(' Classname Expr ')'
+   38     | Selection
+   39     | NEWC Classname '(' ExprLOpt ')'
+   40     | Envoi
+   41     | ExprOperateur
+
+   42 ExprLOpt: LExpr
+   43         | %empty
+
+   44 LExpr: Expr LExpr
+   45      | Expr
+
+   46 ExprOperateur: Expr '+' Expr
+   47              | Expr '-' Expr
+   48              | Expr '*' Expr
+   49              | Expr '/' Expr
+   50              | '-' Expr
+   51              | '+' Expr
+   52              | Expr '&' Expr
+   53              | Expr RelOp
+
+   54 Expr: %empty
+
+   55 Instr: Expr ';'
+   56      | Bloc
+   57      | RETURN ';'
+   58      | Selection AFF Expr ';'
+   59      | IF Expr THEN Instr ELSE Instr
+
+   60 InstrLOpt: LInstr
+   61          | %empty
+
+   62 LInstr: Instr LInstr
+   63       | Instr
+
+   64 Bloc: '{' InstrLOpt '}'
+   65     | '{' LDeclChamp IS LInstr '}'
+
+   66 BlocOpt: Bloc
+   67        | %empty
+
+   68 Envoi: Expr '.' MethodeC
+
+   69 MethodeC: Id '(' ExprLOpt ')'
+
+   70 Selection: Expr '.' Id
+   71          | Id
+   72          | THIS
+   73          | SUPER
+   74          | RESULT
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
+'&' (38) 52
+'(' (40) 5 26 27 36 37 39 69
+')' (41) 5 26 27 36 37 39 69
+'*' (42) 48
+'+' (43) 46 51
+',' (44) 8
+'-' (45) 47 50
+'.' (46) 68 70
+'/' (47) 49
+':' (58) 10 15 26 28
+';' (59) 13 15 24 55 57 58
+'{' (123) 5 64 65
+'}' (125) 5 64 65
 error (256)
-IS (258)
-CLASS (259)
-VAR (260)
-EXTENDS (261)
-DEF (262)
-OVERRIDE (263)
-IF (264)
-THEN (265)
-ELSE (266)
-AFF (267)
+IS (258) 5 27 65
+CLASS (259) 2
+VAR (260) 15
+EXTENDS (261) 32
+DEF (262) 26 27
+OVERRIDE (263) 30
+IF (264) 59
+THEN (265) 59
+ELSE (266) 59
+AFF (267) 20 26 58
 OBJECT (268)
-NEWC (269)
-RETURN (270)
-INTC (271)
-STRINGC (272)
-VOIDC (273)
-ID (274)
-CLASSNAME (275)
-SUPER (276)
-THIS (277)
-RESULT (278)
-CSTE (279)
-RELOP (280)
+NEWC (269) 39
+RETURN (270) 57
+INTC (271) 16
+STRINGC (272) 17
+VOIDC (273) 18
+Id (274) 10 15 26 27 34 69 70 71
+Classname (275) 2 10 19 37 39
+SUPER (276) 73
+THIS (277) 72
+RESULT (278) 74
+Cste (279) 35
+RelOp (280) 53
+UNARY (281)
 
 
 Nonterminals, with rules where they appear
 
-$accept (26)
+$accept (40)
     on left: 0
-Prog (27)
+Prog (41)
     on left: 1, on right: 0
-classLOpt (28)
-    on left: 2, on right: 1
-block (29)
-    on left: 3, on right: 1
+classTete (42)
+    on left: 2, on right: 5
+classLOpt (43)
+    on left: 3 4, on right: 1 3
+Class (44)
+    on left: 5, on right: 3
+paramLOpt (45)
+    on left: 6 7, on right: 5 26 27
+LParam (46)
+    on left: 8 9, on right: 6 8
+Param (47)
+    on left: 10, on right: 8 9
+DeclChampLOpt (48)
+    on left: 11 12, on right: 5
+LDeclChamp (49)
+    on left: 13 14, on right: 11 13 65
+DeclChamp (50)
+    on left: 15, on right: 13 14
+TypeC (51)
+    on left: 16 17 18 19, on right: 15 26 28
+AffOpt (52)
+    on left: 20 21, on right: 15
+DeclMethodeLOpt (53)
+    on left: 22 23, on right: 5
+LDeclMethode (54)
+    on left: 24 25, on right: 22 24
+DeclMethode (55)
+    on left: 26 27, on right: 24 25
+TypeCOpt (56)
+    on left: 28 29, on right: 27
+OverrideOpt (57)
+    on left: 30 31, on right: 26 27
+ExtendsOpt (58)
+    on left: 32 33, on right: 5
+Expr (59)
+    on left: 34 35 36 37 38 39 40 41 54, on right: 20 26 36 37 44 45
+    46 47 48 49 50 51 52 53 55 58 59 68 70
+ExprLOpt (60)
+    on left: 42 43, on right: 39 69
+LExpr (61)
+    on left: 44 45, on right: 42 44
+ExprOperateur (62)
+    on left: 46 47 48 49 50 51 52 53, on right: 41
+Instr (63)
+    on left: 55 56 57 58 59, on right: 59 62 63
+InstrLOpt (64)
+    on left: 60 61, on right: 64
+LInstr (65)
+    on left: 62 63, on right: 60 62 65
+Bloc (66)
+    on left: 64 65, on right: 1 56 66
+BlocOpt (67)
+    on left: 66 67, on right: 5
+Envoi (68)
+    on left: 68, on right: 40
+MethodeC (69)
+    on left: 69, on right: 68
+Selection (70)
+    on left: 70 71 72 73 74, on right: 38 58
 
 
 State 0
 
     0 $accept: . Prog $end
 
-    $default  reduce using rule 2 (classLOpt)
+    CLASS  shift, and go to state 1
 
-    Prog       go to state 1
-    classLOpt  go to state 2
+    $default  reduce using rule 4 (classLOpt)
+
+    Prog       go to state 2
+    classTete  go to state 3
+    classLOpt  go to state 4
+    Class      go to state 5
 
 
 State 1
 
-    0 $accept: Prog . $end
+    2 classTete: CLASS . Classname
 
-    $end  shift, and go to state 3
+    Classname  shift, and go to state 6
 
 
 State 2
 
-    1 Prog: classLOpt . block
+    0 $accept: Prog . $end
 
-    $default  reduce using rule 3 (block)
-
-    block  go to state 4
+    $end  shift, and go to state 7
 
 
 State 3
+
+    5 Class: classTete . '(' paramLOpt ')' ExtendsOpt BlocOpt IS '{' DeclChampLOpt DeclMethodeLOpt '}'
+
+    '('  shift, and go to state 8
+
+
+State 4
+
+    1 Prog: classLOpt . Bloc
+
+    '{'  shift, and go to state 9
+
+    Bloc  go to state 10
+
+
+State 5
+
+    3 classLOpt: Class . classLOpt
+
+    CLASS  shift, and go to state 1
+
+    $default  reduce using rule 4 (classLOpt)
+
+    classTete  go to state 3
+    classLOpt  go to state 11
+    Class      go to state 5
+
+
+State 6
+
+    2 classTete: CLASS Classname .
+
+    $default  reduce using rule 2 (classTete)
+
+
+State 7
 
     0 $accept: Prog $end .
 
     $default  accept
 
 
-State 4
+State 8
 
-    1 Prog: classLOpt block .
+    5 Class: classTete '(' . paramLOpt ')' ExtendsOpt BlocOpt IS '{' DeclChampLOpt DeclMethodeLOpt '}'
+
+    Id  shift, and go to state 12
+
+    $default  reduce using rule 7 (paramLOpt)
+
+    paramLOpt  go to state 13
+    LParam     go to state 14
+    Param      go to state 15
+
+
+State 9
+
+   64 Bloc: '{' . InstrLOpt '}'
+   65     | '{' . LDeclChamp IS LInstr '}'
+
+    VAR     shift, and go to state 16
+    IF      shift, and go to state 17
+    NEWC    shift, and go to state 18
+    RETURN  shift, and go to state 19
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+    '{'     shift, and go to state 9
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '}'       reduce using rule 61 (InstrLOpt)
+    $default  reduce using rule 54 (Expr)
+
+    LDeclChamp     go to state 28
+    DeclChamp      go to state 29
+    Expr           go to state 30
+    ExprOperateur  go to state 31
+    Instr          go to state 32
+    InstrLOpt      go to state 33
+    LInstr         go to state 34
+    Bloc           go to state 35
+    Envoi          go to state 36
+    Selection      go to state 37
+
+
+State 10
+
+    1 Prog: classLOpt Bloc .
 
     $default  reduce using rule 1 (Prog)
+
+
+State 11
+
+    3 classLOpt: Class classLOpt .
+
+    $default  reduce using rule 3 (classLOpt)
+
+
+State 12
+
+   10 Param: Id . ':' Classname
+
+    ':'  shift, and go to state 38
+
+
+State 13
+
+    5 Class: classTete '(' paramLOpt . ')' ExtendsOpt BlocOpt IS '{' DeclChampLOpt DeclMethodeLOpt '}'
+
+    ')'  shift, and go to state 39
+
+
+State 14
+
+    6 paramLOpt: LParam .
+
+    $default  reduce using rule 6 (paramLOpt)
+
+
+State 15
+
+    8 LParam: Param . ',' LParam
+    9       | Param .
+
+    ','  shift, and go to state 40
+
+    $default  reduce using rule 9 (LParam)
+
+
+State 16
+
+   15 DeclChamp: VAR . Id ':' TypeC AffOpt ';'
+
+    Id  shift, and go to state 41
+
+
+State 17
+
+   59 Instr: IF . Expr THEN Instr ELSE Instr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 42
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 18
+
+   39 Expr: NEWC . Classname '(' ExprLOpt ')'
+
+    Classname  shift, and go to state 44
+
+
+State 19
+
+   57 Instr: RETURN . ';'
+
+    ';'  shift, and go to state 45
+
+
+State 20
+
+   34 Expr: Id .
+   71 Selection: Id .
+
+    THEN      reduce using rule 34 (Expr)
+    THEN      [reduce using rule 71 (Selection)]
+    AFF       reduce using rule 71 (Selection)
+    NEWC      reduce using rule 34 (Expr)
+    NEWC      [reduce using rule 71 (Selection)]
+    Id        reduce using rule 34 (Expr)
+    Id        [reduce using rule 71 (Selection)]
+    SUPER     reduce using rule 34 (Expr)
+    SUPER     [reduce using rule 71 (Selection)]
+    THIS      reduce using rule 34 (Expr)
+    THIS      [reduce using rule 71 (Selection)]
+    RESULT    reduce using rule 34 (Expr)
+    RESULT    [reduce using rule 71 (Selection)]
+    Cste      reduce using rule 34 (Expr)
+    Cste      [reduce using rule 71 (Selection)]
+    RelOp     reduce using rule 34 (Expr)
+    RelOp     [reduce using rule 71 (Selection)]
+    '+'       reduce using rule 34 (Expr)
+    '+'       [reduce using rule 71 (Selection)]
+    '-'       reduce using rule 34 (Expr)
+    '-'       [reduce using rule 71 (Selection)]
+    '&'       reduce using rule 34 (Expr)
+    '&'       [reduce using rule 71 (Selection)]
+    '*'       reduce using rule 34 (Expr)
+    '*'       [reduce using rule 71 (Selection)]
+    '/'       reduce using rule 34 (Expr)
+    '/'       [reduce using rule 71 (Selection)]
+    '.'       reduce using rule 34 (Expr)
+    '.'       [reduce using rule 71 (Selection)]
+    '('       reduce using rule 34 (Expr)
+    '('       [reduce using rule 71 (Selection)]
+    ')'       reduce using rule 34 (Expr)
+    ')'       [reduce using rule 71 (Selection)]
+    '}'       reduce using rule 34 (Expr)
+    '}'       [reduce using rule 71 (Selection)]
+    ';'       reduce using rule 34 (Expr)
+    ';'       [reduce using rule 71 (Selection)]
+    $default  reduce using rule 34 (Expr)
+
+
+State 21
+
+   73 Selection: SUPER .
+
+    $default  reduce using rule 73 (Selection)
+
+
+State 22
+
+   72 Selection: THIS .
+
+    $default  reduce using rule 72 (Selection)
+
+
+State 23
+
+   74 Selection: RESULT .
+
+    $default  reduce using rule 74 (Selection)
+
+
+State 24
+
+   35 Expr: Cste .
+
+    $default  reduce using rule 35 (Expr)
+
+
+State 25
+
+   51 ExprOperateur: '+' . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 46
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 26
+
+   50 ExprOperateur: '-' . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 47
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 27
+
+   36 Expr: '(' . Expr ')'
+   37     | '(' . Classname Expr ')'
+
+    NEWC       shift, and go to state 18
+    Id         shift, and go to state 20
+    Classname  shift, and go to state 48
+    SUPER      shift, and go to state 21
+    THIS       shift, and go to state 22
+    RESULT     shift, and go to state 23
+    Cste       shift, and go to state 24
+    '+'        shift, and go to state 25
+    '-'        shift, and go to state 26
+    '('        shift, and go to state 27
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 49
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 28
+
+   65 Bloc: '{' LDeclChamp . IS LInstr '}'
+
+    IS  shift, and go to state 50
+
+
+State 29
+
+   13 LDeclChamp: DeclChamp . ';' LDeclChamp
+   14           | DeclChamp .
+
+    ';'  shift, and go to state 51
+
+    $default  reduce using rule 14 (LDeclChamp)
+
+
+State 30
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   55 Instr: Expr . ';'
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    RelOp  shift, and go to state 52
+    '+'    shift, and go to state 53
+    '-'    shift, and go to state 54
+    '&'    shift, and go to state 55
+    '*'    shift, and go to state 56
+    '/'    shift, and go to state 57
+    '.'    shift, and go to state 58
+    ';'    shift, and go to state 59
+
+
+State 31
+
+   41 Expr: ExprOperateur .
+
+    $default  reduce using rule 41 (Expr)
+
+
+State 32
+
+   62 LInstr: Instr . LInstr
+   63       | Instr .
+
+    IF      shift, and go to state 17
+    NEWC    shift, and go to state 18
+    RETURN  shift, and go to state 19
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+    '{'     shift, and go to state 9
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '}'       reduce using rule 63 (LInstr)
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 30
+    ExprOperateur  go to state 31
+    Instr          go to state 32
+    LInstr         go to state 60
+    Bloc           go to state 35
+    Envoi          go to state 36
+    Selection      go to state 37
+
+
+State 33
+
+   64 Bloc: '{' InstrLOpt . '}'
+
+    '}'  shift, and go to state 61
+
+
+State 34
+
+   60 InstrLOpt: LInstr .
+
+    $default  reduce using rule 60 (InstrLOpt)
+
+
+State 35
+
+   56 Instr: Bloc .
+
+    $default  reduce using rule 56 (Instr)
+
+
+State 36
+
+   40 Expr: Envoi .
+
+    $default  reduce using rule 40 (Expr)
+
+
+State 37
+
+   38 Expr: Selection .
+   58 Instr: Selection . AFF Expr ';'
+
+    AFF  shift, and go to state 62
+
+    $default  reduce using rule 38 (Expr)
+
+
+State 38
+
+   10 Param: Id ':' . Classname
+
+    Classname  shift, and go to state 63
+
+
+State 39
+
+    5 Class: classTete '(' paramLOpt ')' . ExtendsOpt BlocOpt IS '{' DeclChampLOpt DeclMethodeLOpt '}'
+
+    EXTENDS  shift, and go to state 64
+
+    $default  reduce using rule 33 (ExtendsOpt)
+
+    ExtendsOpt  go to state 65
+
+
+State 40
+
+    8 LParam: Param ',' . LParam
+
+    Id  shift, and go to state 12
+
+    LParam  go to state 66
+    Param   go to state 15
+
+
+State 41
+
+   15 DeclChamp: VAR Id . ':' TypeC AffOpt ';'
+
+    ':'  shift, and go to state 67
+
+
+State 42
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   59 Instr: IF Expr . THEN Instr ELSE Instr
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    THEN   shift, and go to state 68
+    RelOp  shift, and go to state 52
+    '+'    shift, and go to state 53
+    '-'    shift, and go to state 54
+    '&'    shift, and go to state 55
+    '*'    shift, and go to state 56
+    '/'    shift, and go to state 57
+    '.'    shift, and go to state 58
+
+
+State 43
+
+   38 Expr: Selection .
+
+    $default  reduce using rule 38 (Expr)
+
+
+State 44
+
+   39 Expr: NEWC Classname . '(' ExprLOpt ')'
+
+    '('  shift, and go to state 69
+
+
+State 45
+
+   57 Instr: RETURN ';' .
+
+    $default  reduce using rule 57 (Instr)
+
+
+State 46
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   51              | '+' Expr .
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    '*'  shift, and go to state 56
+    '/'  shift, and go to state 57
+    '.'  shift, and go to state 58
+
+    $default  reduce using rule 51 (ExprOperateur)
+
+
+State 47
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   50              | '-' Expr .
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    '*'  shift, and go to state 56
+    '/'  shift, and go to state 57
+    '.'  shift, and go to state 58
+
+    $default  reduce using rule 50 (ExprOperateur)
+
+
+State 48
+
+   37 Expr: '(' Classname . Expr ')'
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 70
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 49
+
+   36 Expr: '(' Expr . ')'
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    RelOp  shift, and go to state 52
+    '+'    shift, and go to state 53
+    '-'    shift, and go to state 54
+    '&'    shift, and go to state 55
+    '*'    shift, and go to state 56
+    '/'    shift, and go to state 57
+    '.'    shift, and go to state 58
+    ')'    shift, and go to state 71
+
+
+State 50
+
+   65 Bloc: '{' LDeclChamp IS . LInstr '}'
+
+    IF      shift, and go to state 17
+    NEWC    shift, and go to state 18
+    RETURN  shift, and go to state 19
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+    '{'     shift, and go to state 9
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 30
+    ExprOperateur  go to state 31
+    Instr          go to state 32
+    LInstr         go to state 72
+    Bloc           go to state 35
+    Envoi          go to state 36
+    Selection      go to state 37
+
+
+State 51
+
+   13 LDeclChamp: DeclChamp ';' . LDeclChamp
+
+    VAR  shift, and go to state 16
+
+    LDeclChamp  go to state 73
+    DeclChamp   go to state 29
+
+
+State 52
+
+   53 ExprOperateur: Expr RelOp .
+
+    $default  reduce using rule 53 (ExprOperateur)
+
+
+State 53
+
+   46 ExprOperateur: Expr '+' . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 74
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 54
+
+   47 ExprOperateur: Expr '-' . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 75
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 55
+
+   52 ExprOperateur: Expr '&' . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 76
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 56
+
+   48 ExprOperateur: Expr '*' . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 77
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 57
+
+   49 ExprOperateur: Expr '/' . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 78
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 58
+
+   68 Envoi: Expr '.' . MethodeC
+   70 Selection: Expr '.' . Id
+
+    Id  shift, and go to state 79
+
+    MethodeC  go to state 80
+
+
+State 59
+
+   55 Instr: Expr ';' .
+
+    $default  reduce using rule 55 (Instr)
+
+
+State 60
+
+   62 LInstr: Instr LInstr .
+
+    $default  reduce using rule 62 (LInstr)
+
+
+State 61
+
+   64 Bloc: '{' InstrLOpt '}' .
+
+    $default  reduce using rule 64 (Bloc)
+
+
+State 62
+
+   58 Instr: Selection AFF . Expr ';'
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 81
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 63
+
+   10 Param: Id ':' Classname .
+
+    $default  reduce using rule 10 (Param)
+
+
+State 64
+
+   32 ExtendsOpt: EXTENDS .
+
+    $default  reduce using rule 32 (ExtendsOpt)
+
+
+State 65
+
+    5 Class: classTete '(' paramLOpt ')' ExtendsOpt . BlocOpt IS '{' DeclChampLOpt DeclMethodeLOpt '}'
+
+    '{'  shift, and go to state 9
+
+    $default  reduce using rule 67 (BlocOpt)
+
+    Bloc     go to state 82
+    BlocOpt  go to state 83
+
+
+State 66
+
+    8 LParam: Param ',' LParam .
+
+    $default  reduce using rule 8 (LParam)
+
+
+State 67
+
+   15 DeclChamp: VAR Id ':' . TypeC AffOpt ';'
+
+    INTC       shift, and go to state 84
+    STRINGC    shift, and go to state 85
+    VOIDC      shift, and go to state 86
+    Classname  shift, and go to state 87
+
+    TypeC  go to state 88
+
+
+State 68
+
+   59 Instr: IF Expr THEN . Instr ELSE Instr
+
+    IF      shift, and go to state 17
+    NEWC    shift, and go to state 18
+    RETURN  shift, and go to state 19
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+    '{'     shift, and go to state 9
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 30
+    ExprOperateur  go to state 31
+    Instr          go to state 89
+    Bloc           go to state 35
+    Envoi          go to state 36
+    Selection      go to state 37
+
+
+State 69
+
+   39 Expr: NEWC Classname '(' . ExprLOpt ')'
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    ')'       reduce using rule 43 (ExprLOpt)
+    ')'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 90
+    ExprLOpt       go to state 91
+    LExpr          go to state 92
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 70
+
+   37 Expr: '(' Classname Expr . ')'
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    RelOp  shift, and go to state 52
+    '+'    shift, and go to state 53
+    '-'    shift, and go to state 54
+    '&'    shift, and go to state 55
+    '*'    shift, and go to state 56
+    '/'    shift, and go to state 57
+    '.'    shift, and go to state 58
+    ')'    shift, and go to state 93
+
+
+State 71
+
+   36 Expr: '(' Expr ')' .
+
+    $default  reduce using rule 36 (Expr)
+
+
+State 72
+
+   65 Bloc: '{' LDeclChamp IS LInstr . '}'
+
+    '}'  shift, and go to state 94
+
+
+State 73
+
+   13 LDeclChamp: DeclChamp ';' LDeclChamp .
+
+    $default  reduce using rule 13 (LDeclChamp)
+
+
+State 74
+
+   46 ExprOperateur: Expr . '+' Expr
+   46              | Expr '+' Expr .
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    '*'  shift, and go to state 56
+    '/'  shift, and go to state 57
+    '.'  shift, and go to state 58
+
+    $default  reduce using rule 46 (ExprOperateur)
+
+
+State 75
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   47              | Expr '-' Expr .
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    '*'  shift, and go to state 56
+    '/'  shift, and go to state 57
+    '.'  shift, and go to state 58
+
+    $default  reduce using rule 47 (ExprOperateur)
+
+
+State 76
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   52              | Expr '&' Expr .
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    '*'  shift, and go to state 56
+    '/'  shift, and go to state 57
+    '.'  shift, and go to state 58
+
+    $default  reduce using rule 52 (ExprOperateur)
+
+
+State 77
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   48              | Expr '*' Expr .
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    '.'  shift, and go to state 58
+
+    $default  reduce using rule 48 (ExprOperateur)
+
+
+State 78
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   49              | Expr '/' Expr .
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    '.'  shift, and go to state 58
+
+    $default  reduce using rule 49 (ExprOperateur)
+
+
+State 79
+
+   69 MethodeC: Id . '(' ExprLOpt ')'
+   70 Selection: Expr '.' Id .
+
+    '('  shift, and go to state 95
+
+    '('       [reduce using rule 70 (Selection)]
+    $default  reduce using rule 70 (Selection)
+
+
+State 80
+
+   68 Envoi: Expr '.' MethodeC .
+
+    $default  reduce using rule 68 (Envoi)
+
+
+State 81
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   58 Instr: Selection AFF Expr . ';'
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    RelOp  shift, and go to state 52
+    '+'    shift, and go to state 53
+    '-'    shift, and go to state 54
+    '&'    shift, and go to state 55
+    '*'    shift, and go to state 56
+    '/'    shift, and go to state 57
+    '.'    shift, and go to state 58
+    ';'    shift, and go to state 96
+
+
+State 82
+
+   66 BlocOpt: Bloc .
+
+    $default  reduce using rule 66 (BlocOpt)
+
+
+State 83
+
+    5 Class: classTete '(' paramLOpt ')' ExtendsOpt BlocOpt . IS '{' DeclChampLOpt DeclMethodeLOpt '}'
+
+    IS  shift, and go to state 97
+
+
+State 84
+
+   16 TypeC: INTC .
+
+    $default  reduce using rule 16 (TypeC)
+
+
+State 85
+
+   17 TypeC: STRINGC .
+
+    $default  reduce using rule 17 (TypeC)
+
+
+State 86
+
+   18 TypeC: VOIDC .
+
+    $default  reduce using rule 18 (TypeC)
+
+
+State 87
+
+   19 TypeC: Classname .
+
+    $default  reduce using rule 19 (TypeC)
+
+
+State 88
+
+   15 DeclChamp: VAR Id ':' TypeC . AffOpt ';'
+
+    AFF  shift, and go to state 98
+
+    $default  reduce using rule 21 (AffOpt)
+
+    AffOpt  go to state 99
+
+
+State 89
+
+   59 Instr: IF Expr THEN Instr . ELSE Instr
+
+    ELSE  shift, and go to state 100
+
+
+State 90
+
+   44 LExpr: Expr . LExpr
+   45      | Expr .
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    RelOp   shift, and go to state 52
+    '+'     shift, and go to state 101
+    '-'     shift, and go to state 102
+    '&'     shift, and go to state 55
+    '*'     shift, and go to state 56
+    '/'     shift, and go to state 57
+    '.'     shift, and go to state 58
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    RelOp     [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '&'       [reduce using rule 54 (Expr)]
+    '*'       [reduce using rule 54 (Expr)]
+    '/'       [reduce using rule 54 (Expr)]
+    '.'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    ')'       reduce using rule 45 (LExpr)
+    ')'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 45 (LExpr)
+
+    Expr           go to state 90
+    LExpr          go to state 103
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 91
+
+   39 Expr: NEWC Classname '(' ExprLOpt . ')'
+
+    ')'  shift, and go to state 104
+
+
+State 92
+
+   42 ExprLOpt: LExpr .
+
+    $default  reduce using rule 42 (ExprLOpt)
+
+
+State 93
+
+   37 Expr: '(' Classname Expr ')' .
+
+    $default  reduce using rule 37 (Expr)
+
+
+State 94
+
+   65 Bloc: '{' LDeclChamp IS LInstr '}' .
+
+    $default  reduce using rule 65 (Bloc)
+
+
+State 95
+
+   69 MethodeC: Id '(' . ExprLOpt ')'
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    ')'       reduce using rule 43 (ExprLOpt)
+    ')'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 90
+    ExprLOpt       go to state 105
+    LExpr          go to state 92
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 96
+
+   58 Instr: Selection AFF Expr ';' .
+
+    $default  reduce using rule 58 (Instr)
+
+
+State 97
+
+    5 Class: classTete '(' paramLOpt ')' ExtendsOpt BlocOpt IS . '{' DeclChampLOpt DeclMethodeLOpt '}'
+
+    '{'  shift, and go to state 106
+
+
+State 98
+
+   20 AffOpt: AFF . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 107
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 99
+
+   15 DeclChamp: VAR Id ':' TypeC AffOpt . ';'
+
+    ';'  shift, and go to state 108
+
+
+State 100
+
+   59 Instr: IF Expr THEN Instr ELSE . Instr
+
+    IF      shift, and go to state 17
+    NEWC    shift, and go to state 18
+    RETURN  shift, and go to state 19
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+    '{'     shift, and go to state 9
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 30
+    ExprOperateur  go to state 31
+    Instr          go to state 109
+    Bloc           go to state 35
+    Envoi          go to state 36
+    Selection      go to state 37
+
+
+State 101
+
+   46 ExprOperateur: Expr '+' . Expr
+   51              | '+' . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 110
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 102
+
+   47 ExprOperateur: Expr '-' . Expr
+   50              | '-' . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 111
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 103
+
+   44 LExpr: Expr LExpr .
+
+    $default  reduce using rule 44 (LExpr)
+
+
+State 104
+
+   39 Expr: NEWC Classname '(' ExprLOpt ')' .
+
+    $default  reduce using rule 39 (Expr)
+
+
+State 105
+
+   69 MethodeC: Id '(' ExprLOpt . ')'
+
+    ')'  shift, and go to state 112
+
+
+State 106
+
+    5 Class: classTete '(' paramLOpt ')' ExtendsOpt BlocOpt IS '{' . DeclChampLOpt DeclMethodeLOpt '}'
+
+    VAR  shift, and go to state 16
+
+    $default  reduce using rule 12 (DeclChampLOpt)
+
+    DeclChampLOpt  go to state 113
+    LDeclChamp     go to state 114
+    DeclChamp      go to state 29
+
+
+State 107
+
+   20 AffOpt: AFF Expr .
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    RelOp  shift, and go to state 52
+    '+'    shift, and go to state 53
+    '-'    shift, and go to state 54
+    '&'    shift, and go to state 55
+    '*'    shift, and go to state 56
+    '/'    shift, and go to state 57
+    '.'    shift, and go to state 58
+
+    $default  reduce using rule 20 (AffOpt)
+
+
+State 108
+
+   15 DeclChamp: VAR Id ':' TypeC AffOpt ';' .
+
+    $default  reduce using rule 15 (DeclChamp)
+
+
+State 109
+
+   59 Instr: IF Expr THEN Instr ELSE Instr .
+
+    $default  reduce using rule 59 (Instr)
+
+
+State 110
+
+   46 ExprOperateur: Expr . '+' Expr
+   46              | Expr '+' Expr .
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   51              | '+' Expr .
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    '*'  shift, and go to state 56
+    '/'  shift, and go to state 57
+    '.'  shift, and go to state 58
+
+    NEWC      reduce using rule 46 (ExprOperateur)
+    NEWC      [reduce using rule 51 (ExprOperateur)]
+    Id        reduce using rule 46 (ExprOperateur)
+    Id        [reduce using rule 51 (ExprOperateur)]
+    SUPER     reduce using rule 46 (ExprOperateur)
+    SUPER     [reduce using rule 51 (ExprOperateur)]
+    THIS      reduce using rule 46 (ExprOperateur)
+    THIS      [reduce using rule 51 (ExprOperateur)]
+    RESULT    reduce using rule 46 (ExprOperateur)
+    RESULT    [reduce using rule 51 (ExprOperateur)]
+    Cste      reduce using rule 46 (ExprOperateur)
+    Cste      [reduce using rule 51 (ExprOperateur)]
+    RelOp     reduce using rule 46 (ExprOperateur)
+    RelOp     [reduce using rule 51 (ExprOperateur)]
+    '+'       reduce using rule 46 (ExprOperateur)
+    '+'       [reduce using rule 51 (ExprOperateur)]
+    '-'       reduce using rule 46 (ExprOperateur)
+    '-'       [reduce using rule 51 (ExprOperateur)]
+    '&'       reduce using rule 46 (ExprOperateur)
+    '&'       [reduce using rule 51 (ExprOperateur)]
+    '('       reduce using rule 46 (ExprOperateur)
+    '('       [reduce using rule 51 (ExprOperateur)]
+    ')'       reduce using rule 46 (ExprOperateur)
+    ')'       [reduce using rule 51 (ExprOperateur)]
+    $default  reduce using rule 46 (ExprOperateur)
+
+
+State 111
+
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   47              | Expr '-' Expr .
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   50              | '-' Expr .
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    '*'  shift, and go to state 56
+    '/'  shift, and go to state 57
+    '.'  shift, and go to state 58
+
+    NEWC      reduce using rule 47 (ExprOperateur)
+    NEWC      [reduce using rule 50 (ExprOperateur)]
+    Id        reduce using rule 47 (ExprOperateur)
+    Id        [reduce using rule 50 (ExprOperateur)]
+    SUPER     reduce using rule 47 (ExprOperateur)
+    SUPER     [reduce using rule 50 (ExprOperateur)]
+    THIS      reduce using rule 47 (ExprOperateur)
+    THIS      [reduce using rule 50 (ExprOperateur)]
+    RESULT    reduce using rule 47 (ExprOperateur)
+    RESULT    [reduce using rule 50 (ExprOperateur)]
+    Cste      reduce using rule 47 (ExprOperateur)
+    Cste      [reduce using rule 50 (ExprOperateur)]
+    RelOp     reduce using rule 47 (ExprOperateur)
+    RelOp     [reduce using rule 50 (ExprOperateur)]
+    '+'       reduce using rule 47 (ExprOperateur)
+    '+'       [reduce using rule 50 (ExprOperateur)]
+    '-'       reduce using rule 47 (ExprOperateur)
+    '-'       [reduce using rule 50 (ExprOperateur)]
+    '&'       reduce using rule 47 (ExprOperateur)
+    '&'       [reduce using rule 50 (ExprOperateur)]
+    '('       reduce using rule 47 (ExprOperateur)
+    '('       [reduce using rule 50 (ExprOperateur)]
+    ')'       reduce using rule 47 (ExprOperateur)
+    ')'       [reduce using rule 50 (ExprOperateur)]
+    $default  reduce using rule 47 (ExprOperateur)
+
+
+State 112
+
+   69 MethodeC: Id '(' ExprLOpt ')' .
+
+    $default  reduce using rule 69 (MethodeC)
+
+
+State 113
+
+    5 Class: classTete '(' paramLOpt ')' ExtendsOpt BlocOpt IS '{' DeclChampLOpt . DeclMethodeLOpt '}'
+
+    OVERRIDE  shift, and go to state 115
+
+    DEF       reduce using rule 31 (OverrideOpt)
+    $default  reduce using rule 23 (DeclMethodeLOpt)
+
+    DeclMethodeLOpt  go to state 116
+    LDeclMethode     go to state 117
+    DeclMethode      go to state 118
+    OverrideOpt      go to state 119
+
+
+State 114
+
+   11 DeclChampLOpt: LDeclChamp .
+
+    $default  reduce using rule 11 (DeclChampLOpt)
+
+
+State 115
+
+   30 OverrideOpt: OVERRIDE .
+
+    $default  reduce using rule 30 (OverrideOpt)
+
+
+State 116
+
+    5 Class: classTete '(' paramLOpt ')' ExtendsOpt BlocOpt IS '{' DeclChampLOpt DeclMethodeLOpt . '}'
+
+    '}'  shift, and go to state 120
+
+
+State 117
+
+   22 DeclMethodeLOpt: LDeclMethode .
+
+    $default  reduce using rule 22 (DeclMethodeLOpt)
+
+
+State 118
+
+   24 LDeclMethode: DeclMethode . ';' LDeclMethode
+   25             | DeclMethode .
+
+    ';'  shift, and go to state 121
+
+    $default  reduce using rule 25 (LDeclMethode)
+
+
+State 119
+
+   26 DeclMethode: OverrideOpt . DEF Id '(' paramLOpt ')' ':' TypeC AFF Expr
+   27            | OverrideOpt . DEF Id '(' paramLOpt ')' TypeCOpt IS
+
+    DEF  shift, and go to state 122
+
+
+State 120
+
+    5 Class: classTete '(' paramLOpt ')' ExtendsOpt BlocOpt IS '{' DeclChampLOpt DeclMethodeLOpt '}' .
+
+    $default  reduce using rule 5 (Class)
+
+
+State 121
+
+   24 LDeclMethode: DeclMethode ';' . LDeclMethode
+
+    OVERRIDE  shift, and go to state 115
+
+    $default  reduce using rule 31 (OverrideOpt)
+
+    LDeclMethode  go to state 123
+    DeclMethode   go to state 118
+    OverrideOpt   go to state 119
+
+
+State 122
+
+   26 DeclMethode: OverrideOpt DEF . Id '(' paramLOpt ')' ':' TypeC AFF Expr
+   27            | OverrideOpt DEF . Id '(' paramLOpt ')' TypeCOpt IS
+
+    Id  shift, and go to state 124
+
+
+State 123
+
+   24 LDeclMethode: DeclMethode ';' LDeclMethode .
+
+    $default  reduce using rule 24 (LDeclMethode)
+
+
+State 124
+
+   26 DeclMethode: OverrideOpt DEF Id . '(' paramLOpt ')' ':' TypeC AFF Expr
+   27            | OverrideOpt DEF Id . '(' paramLOpt ')' TypeCOpt IS
+
+    '('  shift, and go to state 125
+
+
+State 125
+
+   26 DeclMethode: OverrideOpt DEF Id '(' . paramLOpt ')' ':' TypeC AFF Expr
+   27            | OverrideOpt DEF Id '(' . paramLOpt ')' TypeCOpt IS
+
+    Id  shift, and go to state 12
+
+    $default  reduce using rule 7 (paramLOpt)
+
+    paramLOpt  go to state 126
+    LParam     go to state 14
+    Param      go to state 15
+
+
+State 126
+
+   26 DeclMethode: OverrideOpt DEF Id '(' paramLOpt . ')' ':' TypeC AFF Expr
+   27            | OverrideOpt DEF Id '(' paramLOpt . ')' TypeCOpt IS
+
+    ')'  shift, and go to state 127
+
+
+State 127
+
+   26 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' . ':' TypeC AFF Expr
+   27            | OverrideOpt DEF Id '(' paramLOpt ')' . TypeCOpt IS
+
+    ':'  shift, and go to state 128
+
+    $default  reduce using rule 29 (TypeCOpt)
+
+    TypeCOpt  go to state 129
+
+
+State 128
+
+   26 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' ':' . TypeC AFF Expr
+   28 TypeCOpt: ':' . TypeC
+
+    INTC       shift, and go to state 84
+    STRINGC    shift, and go to state 85
+    VOIDC      shift, and go to state 86
+    Classname  shift, and go to state 87
+
+    TypeC  go to state 130
+
+
+State 129
+
+   27 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' TypeCOpt . IS
+
+    IS  shift, and go to state 131
+
+
+State 130
+
+   26 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' ':' TypeC . AFF Expr
+   28 TypeCOpt: ':' TypeC .
+
+    AFF  shift, and go to state 132
+
+    $default  reduce using rule 28 (TypeCOpt)
+
+
+State 131
+
+   27 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' TypeCOpt IS .
+
+    $default  reduce using rule 27 (DeclMethode)
+
+
+State 132
+
+   26 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' ':' TypeC AFF . Expr
+
+    NEWC    shift, and go to state 18
+    Id      shift, and go to state 20
+    SUPER   shift, and go to state 21
+    THIS    shift, and go to state 22
+    RESULT  shift, and go to state 23
+    Cste    shift, and go to state 24
+    '+'     shift, and go to state 25
+    '-'     shift, and go to state 26
+    '('     shift, and go to state 27
+
+    '+'       [reduce using rule 54 (Expr)]
+    '-'       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 133
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 133
+
+   26 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' ':' TypeC AFF Expr .
+   46 ExprOperateur: Expr . '+' Expr
+   47              | Expr . '-' Expr
+   48              | Expr . '*' Expr
+   49              | Expr . '/' Expr
+   52              | Expr . '&' Expr
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    RelOp  shift, and go to state 52
+    '+'    shift, and go to state 53
+    '-'    shift, and go to state 54
+    '&'    shift, and go to state 55
+    '*'    shift, and go to state 56
+    '/'    shift, and go to state 57
+    '.'    shift, and go to state 58
+
+    $default  reduce using rule 26 (DeclMethode)

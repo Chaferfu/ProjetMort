@@ -37,7 +37,7 @@ typedef unsigned char bool;
 #define DIV 10
 #define SEMI 11
 
-#define ET 12
+#define CONCAT 12
 #define DP 13
 #define VIRG 14
 #define POINT 15

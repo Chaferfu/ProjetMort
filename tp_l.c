@@ -530,14 +530,15 @@ int keywordOrId() {
   if (! strcmp(yytext, "else")) return ELSE;
   if (! strcmp(yytext, "this")) return THIS;
   if (! strcmp(yytext, "super")) return SUPER;
-  if (! strcmp(yytext, "result")) return SUPER;
+  if (! strcmp(yytext, "result")) return RESULT;
   if (! strcmp(yytext, "new")) return NEWC;
   if (! strcmp(yytext, "return")) return RETURN;
   if (! strcmp(yytext, "object")) return OBJECT;
 
   yylval.S = strdup(yytext);
-  return(ID);
+  return(Id);
 }
+
 
 int keywordOrIdC() {
   if (! strcmp(yytext, "Integer")) return INTC;
@@ -545,14 +546,13 @@ int keywordOrIdC() {
   if (! strcmp(yytext, "Void")) return VOIDC;
 
 	yylval.S = strdup(yytext);
-	return(CLASSNAME);
+	return(Classname);
 }
-
 
 int quelSymbole()
 {
 
-  if (! strcmp(yytext, "&")) return ET;
+  if (! strcmp(yytext, "&")) return CONCAT;
 
   if (! strcmp(yytext, ":")) return DP;
 
@@ -561,9 +561,16 @@ int quelSymbole()
   if (! strcmp(yytext, ".")) return POINT;
 
   if (! strcmp(yytext, "\\")) return ANTISL;
+
+  if (! strcmp(yytext, "+")) return ADD;
+
+  if (! strcmp(yytext, "-")) return SUB;
+
+  if (! strcmp(yytext, "*")) return MULT;
+
+  if (! strcmp(yytext, "/")) return DIV;
   
   return(yytext[0]);
-
 }
 
 
@@ -574,7 +581,7 @@ void lexError(char c) {
   setError(LEXICAL_ERROR);
 }
 
-#line 578 "tp_l.c"
+#line 585 "tp_l.c"
 
 #define INITIAL 0
 
@@ -792,9 +799,9 @@ YY_DECL
 		}
 
 	{
-#line 86 "tp.l"
+#line 93 "tp.l"
 
-#line 798 "tp_l.c"
+#line 805 "tp_l.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -863,93 +870,93 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 87 "tp.l"
-{ yylval.I = atoi(yytext); return(CSTE); }
+#line 94 "tp.l"
+{ yylval.I = atoi(yytext); return(Cste); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 88 "tp.l"
+#line 95 "tp.l"
 { return quelSymbole(); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 89 "tp.l"
+#line 96 "tp.l"
 { return(AFF); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 90 "tp.l"
-{ yylval.C = EQ; return(RELOP); }
+#line 97 "tp.l"
+{ yylval.C = EQ; return(RelOp); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 91 "tp.l"
-{ yylval.C = NE; return(RELOP); }
+#line 98 "tp.l"
+{ yylval.C = NE; return(RelOp); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 92 "tp.l"
-{ yylval.C = INFE; return(RELOP); }
+#line 99 "tp.l"
+{ yylval.C = INFE; return(RelOp); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 93 "tp.l"
-{ yylval.C = SUPE; return(RELOP); }
+#line 100 "tp.l"
+{ yylval.C = SUPE; return(RelOp); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 94 "tp.l"
-{ yylval.C = SUP; return(RELOP); }
+#line 101 "tp.l"
+{ yylval.C = SUP; return(RelOp); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 95 "tp.l"
-{ yylval.C = INF; return(RELOP); }
+#line 102 "tp.l"
+{ yylval.C = INF; return(RelOp); }
 	YY_BREAK
 case 10:
 /* rule 10 can match eol */
 YY_RULE_SETUP
-#line 97 "tp.l"
+#line 104 "tp.l"
 { }
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 98 "tp.l"
+#line 105 "tp.l"
 { }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 99 "tp.l"
+#line 106 "tp.l"
 { return keywordOrId(); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 100 "tp.l"
+#line 107 "tp.l"
 { return keywordOrIdC(); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 101 "tp.l"
+#line 108 "tp.l"
 { return(SEMI); }
 	YY_BREAK
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 102 "tp.l"
+#line 109 "tp.l"
 {yylval.S = yytext; return STRINGC;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 104 "tp.l"
+#line 111 "tp.l"
 { lexError(yytext[0]); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 105 "tp.l"
+#line 112 "tp.l"
 ECHO;
 	YY_BREAK
-#line 953 "tp_l.c"
+#line 960 "tp_l.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1962,7 +1969,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 105 "tp.l"
+#line 112 "tp.l"
 
 
 
