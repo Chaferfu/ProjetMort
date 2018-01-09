@@ -61,14 +61,19 @@ extern int yydebug;
     INTC = 271,
     STRINGC = 272,
     VOIDC = 273,
-    Id = 274,
-    Classname = 275,
-    SUPER = 276,
-    THIS = 277,
-    RESULT = 278,
-    Cste = 279,
-    RelOp = 280,
-    UNARY = 281
+    ADD = 274,
+    SUB = 275,
+    MULT = 276,
+    DIV = 277,
+    CONCAT = 278,
+    Id = 279,
+    Classname = 280,
+    SUPER = 281,
+    THIS = 282,
+    RESULT = 283,
+    Cste = 284,
+    RelOp = 285,
+    UNARY = 286
   };
 #endif
 

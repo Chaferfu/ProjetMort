@@ -31,19 +31,6 @@ typedef unsigned char bool;
 #define SUP	5
 #define SUPE	6
 
-#define ADD 7
-#define SUB 8
-#define MULT 9
-#define DIV 10
-#define SEMI 11
-
-#define CONCAT 12
-#define DP 13
-#define VIRG 14
-#define POINT 15
-#define ANTISL 16
-
-
 
 /* Codes d'erreurs. Cette liste n'est pas obligatoire ni limitative */
 #define NO_ERROR	0

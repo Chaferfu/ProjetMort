@@ -21,18 +21,18 @@ Rules useless in grammar
 
 State 9 conflicts: 2 shift/reduce
 State 17 conflicts: 2 shift/reduce
-State 20 conflicts: 18 reduce/reduce
-State 25 conflicts: 9 shift/reduce
-State 26 conflicts: 9 shift/reduce
+State 20 conflicts: 9 shift/reduce
+State 21 conflicts: 9 shift/reduce
+State 22 conflicts: 18 reduce/reduce
 State 27 conflicts: 2 shift/reduce
 State 32 conflicts: 2 shift/reduce
 State 48 conflicts: 2 shift/reduce
 State 50 conflicts: 2 shift/reduce
+State 52 conflicts: 9 shift/reduce
 State 53 conflicts: 9 shift/reduce
 State 54 conflicts: 9 shift/reduce
 State 55 conflicts: 9 shift/reduce
 State 56 conflicts: 9 shift/reduce
-State 57 conflicts: 9 shift/reduce
 State 62 conflicts: 2 shift/reduce
 State 68 conflicts: 2 shift/reduce
 State 69 conflicts: 9 shift/reduce, 1 reduce/reduce
@@ -118,13 +118,13 @@ Grammar
    44 LExpr: Expr LExpr
    45      | Expr
 
-   46 ExprOperateur: Expr '+' Expr
-   47              | Expr '-' Expr
-   48              | Expr '*' Expr
-   49              | Expr '/' Expr
-   50              | '-' Expr
-   51              | '+' Expr
-   52              | Expr '&' Expr
+   46 ExprOperateur: Expr ADD Expr
+   47              | Expr SUB Expr
+   48              | Expr MULT Expr
+   49              | Expr DIV Expr
+   50              | SUB Expr
+   51              | ADD Expr
+   52              | Expr CONCAT Expr
    53              | Expr RelOp
 
    54 Expr: %empty
@@ -161,15 +161,10 @@ Grammar
 Terminals, with rules where they appear
 
 $end (0) 0
-'&' (38) 52
 '(' (40) 5 26 27 36 37 39 69
 ')' (41) 5 26 27 36 37 39 69
-'*' (42) 48
-'+' (43) 46 51
 ',' (44) 8
-'-' (45) 47 50
 '.' (46) 68 70
-'/' (47) 49
 ':' (58) 10 15 26 28
 ';' (59) 13 15 24 55 57 58
 '{' (123) 5 64 65
@@ -191,14 +186,19 @@ RETURN (270) 57
 INTC (271) 16
 STRINGC (272) 17
 VOIDC (273) 18
-Id (274) 10 15 26 27 34 69 70 71
-Classname (275) 2 10 19 37 39
-SUPER (276) 73
-THIS (277) 72
-RESULT (278) 74
-Cste (279) 35
-RelOp (280) 53
-UNARY (281)
+ADD (274) 46 51
+SUB (275) 47 50
+MULT (276) 48
+DIV (277) 49
+CONCAT (278) 52
+Id (279) 10 15 26 27 34 69 70 71
+Classname (280) 2 10 19 37 39
+SUPER (281) 73
+THIS (282) 72
+RESULT (283) 74
+Cste (284) 35
+RelOp (285) 53
+UNARY (286)
 
 
 Nonterminals, with rules where they appear
@@ -361,18 +361,18 @@ State 9
     IF      shift, and go to state 17
     NEWC    shift, and go to state 18
     RETURN  shift, and go to state 19
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
     '{'     shift, and go to state 9
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     '}'       reduce using rule 61 (InstrLOpt)
     $default  reduce using rule 54 (Expr)
 
@@ -445,17 +445,17 @@ State 17
    59 Instr: IF . Expr THEN Instr ELSE Instr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
     Expr           go to state 42
@@ -480,6 +480,68 @@ State 19
 
 State 20
 
+   51 ExprOperateur: ADD . Expr
+
+    NEWC    shift, and go to state 18
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 46
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 21
+
+   50 ExprOperateur: SUB . Expr
+
+    NEWC    shift, and go to state 18
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
+    '('     shift, and go to state 27
+
+    NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
+    Id        [reduce using rule 54 (Expr)]
+    SUPER     [reduce using rule 54 (Expr)]
+    THIS      [reduce using rule 54 (Expr)]
+    RESULT    [reduce using rule 54 (Expr)]
+    Cste      [reduce using rule 54 (Expr)]
+    '('       [reduce using rule 54 (Expr)]
+    $default  reduce using rule 54 (Expr)
+
+    Expr           go to state 47
+    ExprOperateur  go to state 31
+    Envoi          go to state 36
+    Selection      go to state 43
+
+
+State 22
+
    34 Expr: Id .
    71 Selection: Id .
 
@@ -488,6 +550,16 @@ State 20
     AFF       reduce using rule 71 (Selection)
     NEWC      reduce using rule 34 (Expr)
     NEWC      [reduce using rule 71 (Selection)]
+    ADD       reduce using rule 34 (Expr)
+    ADD       [reduce using rule 71 (Selection)]
+    SUB       reduce using rule 34 (Expr)
+    SUB       [reduce using rule 71 (Selection)]
+    MULT      reduce using rule 34 (Expr)
+    MULT      [reduce using rule 71 (Selection)]
+    DIV       reduce using rule 34 (Expr)
+    DIV       [reduce using rule 71 (Selection)]
+    CONCAT    reduce using rule 34 (Expr)
+    CONCAT    [reduce using rule 71 (Selection)]
     Id        reduce using rule 34 (Expr)
     Id        [reduce using rule 71 (Selection)]
     SUPER     reduce using rule 34 (Expr)
@@ -500,16 +572,6 @@ State 20
     Cste      [reduce using rule 71 (Selection)]
     RelOp     reduce using rule 34 (Expr)
     RelOp     [reduce using rule 71 (Selection)]
-    '+'       reduce using rule 34 (Expr)
-    '+'       [reduce using rule 71 (Selection)]
-    '-'       reduce using rule 34 (Expr)
-    '-'       [reduce using rule 71 (Selection)]
-    '&'       reduce using rule 34 (Expr)
-    '&'       [reduce using rule 71 (Selection)]
-    '*'       reduce using rule 34 (Expr)
-    '*'       [reduce using rule 71 (Selection)]
-    '/'       reduce using rule 34 (Expr)
-    '/'       [reduce using rule 71 (Selection)]
     '.'       reduce using rule 34 (Expr)
     '.'       [reduce using rule 71 (Selection)]
     '('       reduce using rule 34 (Expr)
@@ -523,94 +585,32 @@ State 20
     $default  reduce using rule 34 (Expr)
 
 
-State 21
+State 23
 
    73 Selection: SUPER .
 
     $default  reduce using rule 73 (Selection)
 
 
-State 22
+State 24
 
    72 Selection: THIS .
 
     $default  reduce using rule 72 (Selection)
 
 
-State 23
+State 25
 
    74 Selection: RESULT .
 
     $default  reduce using rule 74 (Selection)
 
 
-State 24
+State 26
 
    35 Expr: Cste .
 
     $default  reduce using rule 35 (Expr)
-
-
-State 25
-
-   51 ExprOperateur: '+' . Expr
-
-    NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
-    '('     shift, and go to state 27
-
-    NEWC      [reduce using rule 54 (Expr)]
-    Id        [reduce using rule 54 (Expr)]
-    SUPER     [reduce using rule 54 (Expr)]
-    THIS      [reduce using rule 54 (Expr)]
-    RESULT    [reduce using rule 54 (Expr)]
-    Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
-    '('       [reduce using rule 54 (Expr)]
-    $default  reduce using rule 54 (Expr)
-
-    Expr           go to state 46
-    ExprOperateur  go to state 31
-    Envoi          go to state 36
-    Selection      go to state 43
-
-
-State 26
-
-   50 ExprOperateur: '-' . Expr
-
-    NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
-    '('     shift, and go to state 27
-
-    NEWC      [reduce using rule 54 (Expr)]
-    Id        [reduce using rule 54 (Expr)]
-    SUPER     [reduce using rule 54 (Expr)]
-    THIS      [reduce using rule 54 (Expr)]
-    RESULT    [reduce using rule 54 (Expr)]
-    Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
-    '('       [reduce using rule 54 (Expr)]
-    $default  reduce using rule 54 (Expr)
-
-    Expr           go to state 47
-    ExprOperateur  go to state 31
-    Envoi          go to state 36
-    Selection      go to state 43
 
 
 State 27
@@ -619,18 +619,18 @@ State 27
    37     | '(' . Classname Expr ')'
 
     NEWC       shift, and go to state 18
-    Id         shift, and go to state 20
+    ADD        shift, and go to state 20
+    SUB        shift, and go to state 21
+    Id         shift, and go to state 22
     Classname  shift, and go to state 48
-    SUPER      shift, and go to state 21
-    THIS       shift, and go to state 22
-    RESULT     shift, and go to state 23
-    Cste       shift, and go to state 24
-    '+'        shift, and go to state 25
-    '-'        shift, and go to state 26
+    SUPER      shift, and go to state 23
+    THIS       shift, and go to state 24
+    RESULT     shift, and go to state 25
+    Cste       shift, and go to state 26
     '('        shift, and go to state 27
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
     Expr           go to state 49
@@ -658,24 +658,24 @@ State 29
 
 State 30
 
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    55 Instr: Expr . ';'
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    RelOp  shift, and go to state 52
-    '+'    shift, and go to state 53
-    '-'    shift, and go to state 54
-    '&'    shift, and go to state 55
-    '*'    shift, and go to state 56
-    '/'    shift, and go to state 57
-    '.'    shift, and go to state 58
-    ';'    shift, and go to state 59
+    ADD     shift, and go to state 52
+    SUB     shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIV     shift, and go to state 55
+    CONCAT  shift, and go to state 56
+    RelOp   shift, and go to state 57
+    '.'     shift, and go to state 58
+    ';'     shift, and go to state 59
 
 
 State 31
@@ -693,18 +693,18 @@ State 32
     IF      shift, and go to state 17
     NEWC    shift, and go to state 18
     RETURN  shift, and go to state 19
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
     '{'     shift, and go to state 9
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     '}'       reduce using rule 63 (LInstr)
     $default  reduce using rule 54 (Expr)
 
@@ -792,24 +792,24 @@ State 41
 
 State 42
 
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    59 Instr: IF Expr . THEN Instr ELSE Instr
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    THEN   shift, and go to state 68
-    RelOp  shift, and go to state 52
-    '+'    shift, and go to state 53
-    '-'    shift, and go to state 54
-    '&'    shift, and go to state 55
-    '*'    shift, and go to state 56
-    '/'    shift, and go to state 57
-    '.'    shift, and go to state 58
+    THEN    shift, and go to state 68
+    ADD     shift, and go to state 52
+    SUB     shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIV     shift, and go to state 55
+    CONCAT  shift, and go to state 56
+    RelOp   shift, and go to state 57
+    '.'     shift, and go to state 58
 
 
 State 43
@@ -835,38 +835,38 @@ State 45
 
 State 46
 
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   51              | '+' Expr .
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   51              | ADD Expr .
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    '*'  shift, and go to state 56
-    '/'  shift, and go to state 57
-    '.'  shift, and go to state 58
+    MULT  shift, and go to state 54
+    DIV   shift, and go to state 55
+    '.'   shift, and go to state 58
 
     $default  reduce using rule 51 (ExprOperateur)
 
 
 State 47
 
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   50              | '-' Expr .
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   50              | SUB Expr .
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    '*'  shift, and go to state 56
-    '/'  shift, and go to state 57
-    '.'  shift, and go to state 58
+    MULT  shift, and go to state 54
+    DIV   shift, and go to state 55
+    '.'   shift, and go to state 58
 
     $default  reduce using rule 50 (ExprOperateur)
 
@@ -876,17 +876,17 @@ State 48
    37 Expr: '(' Classname . Expr ')'
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
     Expr           go to state 70
@@ -898,23 +898,23 @@ State 48
 State 49
 
    36 Expr: '(' Expr . ')'
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    RelOp  shift, and go to state 52
-    '+'    shift, and go to state 53
-    '-'    shift, and go to state 54
-    '&'    shift, and go to state 55
-    '*'    shift, and go to state 56
-    '/'    shift, and go to state 57
-    '.'    shift, and go to state 58
-    ')'    shift, and go to state 71
+    ADD     shift, and go to state 52
+    SUB     shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIV     shift, and go to state 55
+    CONCAT  shift, and go to state 56
+    RelOp   shift, and go to state 57
+    '.'     shift, and go to state 58
+    ')'     shift, and go to state 71
 
 
 State 50
@@ -924,18 +924,18 @@ State 50
     IF      shift, and go to state 17
     NEWC    shift, and go to state 18
     RETURN  shift, and go to state 19
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
     '{'     shift, and go to state 9
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
     Expr           go to state 30
@@ -959,33 +959,26 @@ State 51
 
 State 52
 
-   53 ExprOperateur: Expr RelOp .
-
-    $default  reduce using rule 53 (ExprOperateur)
-
-
-State 53
-
-   46 ExprOperateur: Expr '+' . Expr
+   46 ExprOperateur: Expr ADD . Expr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
@@ -995,28 +988,28 @@ State 53
     Selection      go to state 43
 
 
-State 54
+State 53
 
-   47 ExprOperateur: Expr '-' . Expr
+   47 ExprOperateur: Expr SUB . Expr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
@@ -1026,28 +1019,28 @@ State 54
     Selection      go to state 43
 
 
-State 55
+State 54
 
-   52 ExprOperateur: Expr '&' . Expr
+   48 ExprOperateur: Expr MULT . Expr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
@@ -1057,28 +1050,28 @@ State 55
     Selection      go to state 43
 
 
-State 56
+State 55
 
-   48 ExprOperateur: Expr '*' . Expr
+   49 ExprOperateur: Expr DIV . Expr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
@@ -1088,28 +1081,28 @@ State 56
     Selection      go to state 43
 
 
-State 57
+State 56
 
-   49 ExprOperateur: Expr '/' . Expr
+   52 ExprOperateur: Expr CONCAT . Expr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
@@ -1117,6 +1110,13 @@ State 57
     ExprOperateur  go to state 31
     Envoi          go to state 36
     Selection      go to state 43
+
+
+State 57
+
+   53 ExprOperateur: Expr RelOp .
+
+    $default  reduce using rule 53 (ExprOperateur)
 
 
 State 58
@@ -1155,17 +1155,17 @@ State 62
    58 Instr: Selection AFF . Expr ';'
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
     Expr           go to state 81
@@ -1226,18 +1226,18 @@ State 68
     IF      shift, and go to state 17
     NEWC    shift, and go to state 18
     RETURN  shift, and go to state 19
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
     '{'     shift, and go to state 9
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
     Expr           go to state 30
@@ -1253,23 +1253,23 @@ State 69
    39 Expr: NEWC Classname '(' . ExprLOpt ')'
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     ')'       reduce using rule 43 (ExprLOpt)
     ')'       [reduce using rule 54 (Expr)]
@@ -1286,23 +1286,23 @@ State 69
 State 70
 
    37 Expr: '(' Classname Expr . ')'
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    RelOp  shift, and go to state 52
-    '+'    shift, and go to state 53
-    '-'    shift, and go to state 54
-    '&'    shift, and go to state 55
-    '*'    shift, and go to state 56
-    '/'    shift, and go to state 57
-    '.'    shift, and go to state 58
-    ')'    shift, and go to state 93
+    ADD     shift, and go to state 52
+    SUB     shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIV     shift, and go to state 55
+    CONCAT  shift, and go to state 56
+    RelOp   shift, and go to state 57
+    '.'     shift, and go to state 58
+    ')'     shift, and go to state 93
 
 
 State 71
@@ -1328,69 +1328,50 @@ State 73
 
 State 74
 
-   46 ExprOperateur: Expr . '+' Expr
-   46              | Expr '+' Expr .
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   46              | Expr ADD Expr .
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    '*'  shift, and go to state 56
-    '/'  shift, and go to state 57
-    '.'  shift, and go to state 58
+    MULT  shift, and go to state 54
+    DIV   shift, and go to state 55
+    '.'   shift, and go to state 58
 
     $default  reduce using rule 46 (ExprOperateur)
 
 
 State 75
 
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   47              | Expr '-' Expr .
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   47              | Expr SUB Expr .
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    '*'  shift, and go to state 56
-    '/'  shift, and go to state 57
-    '.'  shift, and go to state 58
+    MULT  shift, and go to state 54
+    DIV   shift, and go to state 55
+    '.'   shift, and go to state 58
 
     $default  reduce using rule 47 (ExprOperateur)
 
 
 State 76
 
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
-   52              | Expr '&' Expr .
-   53              | Expr . RelOp
-   68 Envoi: Expr . '.' MethodeC
-   70 Selection: Expr . '.' Id
-
-    '*'  shift, and go to state 56
-    '/'  shift, and go to state 57
-    '.'  shift, and go to state 58
-
-    $default  reduce using rule 52 (ExprOperateur)
-
-
-State 77
-
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   48              | Expr '*' Expr .
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   48              | Expr MULT Expr .
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
@@ -1400,14 +1381,14 @@ State 77
     $default  reduce using rule 48 (ExprOperateur)
 
 
-State 78
+State 77
 
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   49              | Expr '/' Expr .
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   49              | Expr DIV Expr .
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
@@ -1415,6 +1396,25 @@ State 78
     '.'  shift, and go to state 58
 
     $default  reduce using rule 49 (ExprOperateur)
+
+
+State 78
+
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
+   52              | Expr CONCAT Expr .
+   53              | Expr . RelOp
+   68 Envoi: Expr . '.' MethodeC
+   70 Selection: Expr . '.' Id
+
+    MULT  shift, and go to state 54
+    DIV   shift, and go to state 55
+    '.'   shift, and go to state 58
+
+    $default  reduce using rule 52 (ExprOperateur)
 
 
 State 79
@@ -1437,24 +1437,24 @@ State 80
 
 State 81
 
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    58 Instr: Selection AFF Expr . ';'
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    RelOp  shift, and go to state 52
-    '+'    shift, and go to state 53
-    '-'    shift, and go to state 54
-    '&'    shift, and go to state 55
-    '*'    shift, and go to state 56
-    '/'    shift, and go to state 57
-    '.'    shift, and go to state 58
-    ';'    shift, and go to state 96
+    ADD     shift, and go to state 52
+    SUB     shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIV     shift, and go to state 55
+    CONCAT  shift, and go to state 56
+    RelOp   shift, and go to state 57
+    '.'     shift, and go to state 58
+    ';'     shift, and go to state 96
 
 
 State 82
@@ -1521,42 +1521,42 @@ State 90
 
    44 LExpr: Expr . LExpr
    45      | Expr .
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    RelOp   shift, and go to state 52
-    '+'     shift, and go to state 101
-    '-'     shift, and go to state 102
-    '&'     shift, and go to state 55
-    '*'     shift, and go to state 56
-    '/'     shift, and go to state 57
+    ADD     shift, and go to state 101
+    SUB     shift, and go to state 102
+    MULT    shift, and go to state 54
+    DIV     shift, and go to state 55
+    CONCAT  shift, and go to state 56
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
+    RelOp   shift, and go to state 57
     '.'     shift, and go to state 58
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
+    MULT      [reduce using rule 54 (Expr)]
+    DIV       [reduce using rule 54 (Expr)]
+    CONCAT    [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
     RelOp     [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
-    '&'       [reduce using rule 54 (Expr)]
-    '*'       [reduce using rule 54 (Expr)]
-    '/'       [reduce using rule 54 (Expr)]
     '.'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     ')'       reduce using rule 45 (LExpr)
@@ -1603,23 +1603,23 @@ State 95
    69 MethodeC: Id '(' . ExprLOpt ')'
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     ')'       reduce using rule 43 (ExprLOpt)
     ')'       [reduce using rule 54 (Expr)]
@@ -1652,17 +1652,17 @@ State 98
    20 AffOpt: AFF . Expr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
     Expr           go to state 107
@@ -1685,18 +1685,18 @@ State 100
     IF      shift, and go to state 17
     NEWC    shift, and go to state 18
     RETURN  shift, and go to state 19
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
     '{'     shift, and go to state 9
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
     Expr           go to state 30
@@ -1709,27 +1709,27 @@ State 100
 
 State 101
 
-   46 ExprOperateur: Expr '+' . Expr
-   51              | '+' . Expr
+   46 ExprOperateur: Expr ADD . Expr
+   51              | ADD . Expr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
@@ -1741,27 +1741,27 @@ State 101
 
 State 102
 
-   47 ExprOperateur: Expr '-' . Expr
-   50              | '-' . Expr
+   47 ExprOperateur: Expr SUB . Expr
+   50              | SUB . Expr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
     NEWC      [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     Id        [reduce using rule 54 (Expr)]
     SUPER     [reduce using rule 54 (Expr)]
     THIS      [reduce using rule 54 (Expr)]
     RESULT    [reduce using rule 54 (Expr)]
     Cste      [reduce using rule 54 (Expr)]
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
     '('       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
@@ -1808,22 +1808,22 @@ State 106
 State 107
 
    20 AffOpt: AFF Expr .
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    RelOp  shift, and go to state 52
-    '+'    shift, and go to state 53
-    '-'    shift, and go to state 54
-    '&'    shift, and go to state 55
-    '*'    shift, and go to state 56
-    '/'    shift, and go to state 57
-    '.'    shift, and go to state 58
+    ADD     shift, and go to state 52
+    SUB     shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIV     shift, and go to state 55
+    CONCAT  shift, and go to state 56
+    RelOp   shift, and go to state 57
+    '.'     shift, and go to state 58
 
     $default  reduce using rule 20 (AffOpt)
 
@@ -1844,23 +1844,29 @@ State 109
 
 State 110
 
-   46 ExprOperateur: Expr . '+' Expr
-   46              | Expr '+' Expr .
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   51              | '+' Expr .
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   46              | Expr ADD Expr .
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   51              | ADD Expr .
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    '*'  shift, and go to state 56
-    '/'  shift, and go to state 57
-    '.'  shift, and go to state 58
+    MULT  shift, and go to state 54
+    DIV   shift, and go to state 55
+    '.'   shift, and go to state 58
 
     NEWC      reduce using rule 46 (ExprOperateur)
     NEWC      [reduce using rule 51 (ExprOperateur)]
+    ADD       reduce using rule 46 (ExprOperateur)
+    ADD       [reduce using rule 51 (ExprOperateur)]
+    SUB       reduce using rule 46 (ExprOperateur)
+    SUB       [reduce using rule 51 (ExprOperateur)]
+    CONCAT    reduce using rule 46 (ExprOperateur)
+    CONCAT    [reduce using rule 51 (ExprOperateur)]
     Id        reduce using rule 46 (ExprOperateur)
     Id        [reduce using rule 51 (ExprOperateur)]
     SUPER     reduce using rule 46 (ExprOperateur)
@@ -1873,12 +1879,6 @@ State 110
     Cste      [reduce using rule 51 (ExprOperateur)]
     RelOp     reduce using rule 46 (ExprOperateur)
     RelOp     [reduce using rule 51 (ExprOperateur)]
-    '+'       reduce using rule 46 (ExprOperateur)
-    '+'       [reduce using rule 51 (ExprOperateur)]
-    '-'       reduce using rule 46 (ExprOperateur)
-    '-'       [reduce using rule 51 (ExprOperateur)]
-    '&'       reduce using rule 46 (ExprOperateur)
-    '&'       [reduce using rule 51 (ExprOperateur)]
     '('       reduce using rule 46 (ExprOperateur)
     '('       [reduce using rule 51 (ExprOperateur)]
     ')'       reduce using rule 46 (ExprOperateur)
@@ -1888,23 +1888,29 @@ State 110
 
 State 111
 
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   47              | Expr '-' Expr .
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   50              | '-' Expr .
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   47              | Expr SUB Expr .
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   50              | SUB Expr .
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    '*'  shift, and go to state 56
-    '/'  shift, and go to state 57
-    '.'  shift, and go to state 58
+    MULT  shift, and go to state 54
+    DIV   shift, and go to state 55
+    '.'   shift, and go to state 58
 
     NEWC      reduce using rule 47 (ExprOperateur)
     NEWC      [reduce using rule 50 (ExprOperateur)]
+    ADD       reduce using rule 47 (ExprOperateur)
+    ADD       [reduce using rule 50 (ExprOperateur)]
+    SUB       reduce using rule 47 (ExprOperateur)
+    SUB       [reduce using rule 50 (ExprOperateur)]
+    CONCAT    reduce using rule 47 (ExprOperateur)
+    CONCAT    [reduce using rule 50 (ExprOperateur)]
     Id        reduce using rule 47 (ExprOperateur)
     Id        [reduce using rule 50 (ExprOperateur)]
     SUPER     reduce using rule 47 (ExprOperateur)
@@ -1917,12 +1923,6 @@ State 111
     Cste      [reduce using rule 50 (ExprOperateur)]
     RelOp     reduce using rule 47 (ExprOperateur)
     RelOp     [reduce using rule 50 (ExprOperateur)]
-    '+'       reduce using rule 47 (ExprOperateur)
-    '+'       [reduce using rule 50 (ExprOperateur)]
-    '-'       reduce using rule 47 (ExprOperateur)
-    '-'       [reduce using rule 50 (ExprOperateur)]
-    '&'       reduce using rule 47 (ExprOperateur)
-    '&'       [reduce using rule 50 (ExprOperateur)]
     '('       reduce using rule 47 (ExprOperateur)
     '('       [reduce using rule 50 (ExprOperateur)]
     ')'       reduce using rule 47 (ExprOperateur)
@@ -2117,17 +2117,17 @@ State 132
    26 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' ':' TypeC AFF . Expr
 
     NEWC    shift, and go to state 18
-    Id      shift, and go to state 20
-    SUPER   shift, and go to state 21
-    THIS    shift, and go to state 22
-    RESULT  shift, and go to state 23
-    Cste    shift, and go to state 24
-    '+'     shift, and go to state 25
-    '-'     shift, and go to state 26
+    ADD     shift, and go to state 20
+    SUB     shift, and go to state 21
+    Id      shift, and go to state 22
+    SUPER   shift, and go to state 23
+    THIS    shift, and go to state 24
+    RESULT  shift, and go to state 25
+    Cste    shift, and go to state 26
     '('     shift, and go to state 27
 
-    '+'       [reduce using rule 54 (Expr)]
-    '-'       [reduce using rule 54 (Expr)]
+    ADD       [reduce using rule 54 (Expr)]
+    SUB       [reduce using rule 54 (Expr)]
     $default  reduce using rule 54 (Expr)
 
     Expr           go to state 133
@@ -2139,21 +2139,21 @@ State 132
 State 133
 
    26 DeclMethode: OverrideOpt DEF Id '(' paramLOpt ')' ':' TypeC AFF Expr .
-   46 ExprOperateur: Expr . '+' Expr
-   47              | Expr . '-' Expr
-   48              | Expr . '*' Expr
-   49              | Expr . '/' Expr
-   52              | Expr . '&' Expr
+   46 ExprOperateur: Expr . ADD Expr
+   47              | Expr . SUB Expr
+   48              | Expr . MULT Expr
+   49              | Expr . DIV Expr
+   52              | Expr . CONCAT Expr
    53              | Expr . RelOp
    68 Envoi: Expr . '.' MethodeC
    70 Selection: Expr . '.' Id
 
-    RelOp  shift, and go to state 52
-    '+'    shift, and go to state 53
-    '-'    shift, and go to state 54
-    '&'    shift, and go to state 55
-    '*'    shift, and go to state 56
-    '/'    shift, and go to state 57
-    '.'    shift, and go to state 58
+    ADD     shift, and go to state 52
+    SUB     shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIV     shift, and go to state 55
+    CONCAT  shift, and go to state 56
+    RelOp   shift, and go to state 57
+    '.'     shift, and go to state 58
 
     $default  reduce using rule 26 (DeclMethode)

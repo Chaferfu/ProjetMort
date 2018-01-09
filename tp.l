@@ -5,7 +5,7 @@ Upper	[A-Z]
 Lettre	[a-zA-Z]
 LC 	({Lettre}|{Chiffre})
 Delim   [ \b\t\n\r]
-Symbole [&+\-*/():,.{}]
+Symbole [\():;,.{}]
 BS      \\.
 PasBSG [^\\"]
 Guill		"\""
@@ -56,30 +56,6 @@ int keywordOrIdC() {
 	return(Classname);
 }
 
-int quelSymbole()
-{
-
-  if (! strcmp(yytext, "&")) return CONCAT;
-
-  if (! strcmp(yytext, ":")) return DP;
-
-  if (! strcmp(yytext, ",")) return VIRG;
-
-  if (! strcmp(yytext, ".")) return POINT;
-
-  if (! strcmp(yytext, "\\")) return ANTISL;
-
-  if (! strcmp(yytext, "+")) return ADD;
-
-  if (! strcmp(yytext, "-")) return SUB;
-
-  if (! strcmp(yytext, "*")) return MULT;
-
-  if (! strcmp(yytext, "/")) return DIV;
-  
-  return(yytext[0]);
-}
-
 
 
 void lexError(char c) {
@@ -92,7 +68,7 @@ void lexError(char c) {
 
 %%
 {Entier} 	{ yylval.I = atoi(yytext); return(Cste); }
-{Symbole}	{ return quelSymbole(); }
+{Symbole}	{ return(yytext[0]); }
 ":="		{ return(AFF); }
 "="		{ yylval.C = EQ; return(RelOp); }
 "<>"		{ yylval.C = NE; return(RelOp); }
@@ -101,11 +77,16 @@ void lexError(char c) {
 ">"		{ yylval.C = SUP; return(RelOp); }
 "<"		{ yylval.C = INF; return(RelOp); }
 
+"+"    { return(ADD); }
+"-"    { return(SUB); }
+"*"    { return(MULT); }
+"/"    { return(DIV); }
+"&"    { return(CONCAT); }
+
 "/*"({NotStar}|({Star}+{NotStarPar}))*{Star}*"*/"  { }
 {Delim}        { }
 {Lower}{LC}*   { return keywordOrId(); }
 {Upper}{LC}*   { return keywordOrIdC(); }
-";"            { return(SEMI); }
 {Guill}({BS}|{PasBSG})*{Guill}   {yylval.S = yytext; return STRINGC;}
 
 . 		         { lexError(yytext[0]); }

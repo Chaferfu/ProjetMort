@@ -1,14 +1,14 @@
 /* attention: NEW est defini dans tp.h Utilisez un autre nom de token */
 %token IS CLASS VAR EXTENDS DEF OVERRIDE IF THEN ELSE AFF 
-%token OBJECT NEWC RETURN INTC STRINGC VOIDC
+%token OBJECT NEWC RETURN INTC STRINGC VOIDC ADD SUB MULT DIV CONCAT
 %token<S> Id Classname SUPER THIS RESULT
 %token<I> Cste
 %token<C> RelOp
 
 %right AFF
 %nonassoc RelOp
-%left '+' '-' '&'
-%left '*' '/'
+%left ADD SUB CONCAT
+%left MULT DIV
 %right '.'
 %nonassoc UNARY
 
@@ -129,13 +129,13 @@ LExpr: Expr LExpr {/*TODO*/; }
 | Expr 			  {/*TODO*/; }
 ;
 
-ExprOperateur: Expr '+' Expr {/*TODO*/; }
-| Expr '-' Expr {/*TODO*/; }
-| Expr '*' Expr {/*TODO*/; }
-| Expr '/' Expr {/*TODO*/; }
-| '-' Expr {/*TODO*/; }
-| '+' Expr {/*TODO*/; }             /*Voir syntaxe pour unaire*/
-| Expr '&' Expr {/*TODO*/; }
+ExprOperateur: Expr ADD Expr {/*TODO*/; }
+| Expr SUB Expr {/*TODO*/; }
+| Expr MULT Expr {/*TODO*/; }
+| Expr DIV Expr {/*TODO*/; }
+| SUB Expr {/*TODO*/; }
+| ADD Expr {/*TODO*/; }             /*Voir syntaxe pour unaire*/
+| Expr CONCAT Expr {/*TODO*/; }
 | Expr RelOp Expr
 :
 

@@ -236,6 +236,11 @@ int main(int argc, char **argv) {
     case ']':
     case '(':
     case ')':
+    case ':':
+    case '.':
+    case ',':
+    case '\\':
+    case ';':
       if (verbose) printf("Symbole:\t%s\n",  yytext);
       break;
 
@@ -248,16 +253,8 @@ int main(int argc, char **argv) {
      if (verbose) printf("multiplication\n"); break;
     case DIV:
      if (verbose) printf("division\n"); break;
-
-
-    case DP:
-    case POINT:
-    case VIRG:
-    case ANTISL:
     case CONCAT:
-      if (verbose) printf("Autres symboles : \t%s\n", yytext);
-      break;
-
+     if (verbose) printf("concatenation\n"); break;
 
 
     case RelOp:
@@ -276,9 +273,6 @@ int main(int argc, char **argv) {
       	}
       }
       break;
-
-    case SEMI:
-      if (verbose) printf("point virgule ;\n"); break;
 
 
     default:
