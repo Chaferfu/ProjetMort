@@ -1,14 +1,13 @@
 /* attention: NEW est defini dans tp.h Utilisez un autre nom de token */
-%token IS CLASS VAR EXTENDS DEF OVERRIDE IF THEN ELSE AFF 
-%token OBJECT NEWC RETURN INTC STRINGC VOIDC ADD SUB MULT DIV CONCAT
-%token<S> Id Classname SUPER THIS RESULT
+%token IS CLASS VAR EXTENDS DEF OVERRIDE RETURN AS IF THEN ELSE AFF NEWC VOIDC INTC STRINGC THIS SUPER RESULT ADD SUB MUL DIV CONCAT
+%token OBJECT
+%token<S> Id Classname 
 %token<I> Cste
 %token<C> RelOp
-
 %right AFF
 %nonassoc RelOp
-%left ADD SUB CONCAT
-%left MULT DIV
+%left '+' '-' '&'
+%left '*' '/'
 %right '.'
 %nonassoc UNARY
 
@@ -18,7 +17,7 @@
 			LInstr Bloc 
 			Envoi Selection
 %type <pC> 	Class classTete classLOpt
-%type <pM> 	DeclMethodeLOpt LDeclMethode DeclMethode
+%type <pM> 	DeclMethodeLOpt DeclMethode
 %type <pV> 	DeclChampLOpt LDeclChamp DeclChamp Param paramLOpt
 			LParam
 %type <I> 	OverrideOpt
@@ -38,12 +37,12 @@ Prog : classLOpt Bloc
 classTete: CLASS Classname { $$ = makeClass($2); }
 ;
 
-classLOpt: Class classLOpt {/*TODO : à trouver */;}
+classLOpt: Class classLOpt { $1->nextClass = $2; $$ = $1 ;}
 | 	{$$ = NIL(Class)}
 ;
 
 Class: classTete '(' paramLOpt ')' ExtendsOpt BlocOpt IS '{' DeclChampLOpt DeclMethodeLOpt '}'
-									{ /*TODO*/ ;}
+								 { initClasse($1, $3, $5, $6, $9, $10); $$ = $1; }
 ;
 
 paramLOpt: LParam {	$$ = $1; }
@@ -54,124 +53,116 @@ LParam: Param ',' LParam { $1->nextParam = $3; $$=$1; }
 | Param            	     { $$ = $1; }
 ;
 
-Param: Id ':' Classname  {/*TODO*/; }
+Param: Id ':' Classname  { $$ = makeParam($1,$3,NIL(Tree),0); }
 ;
 
 
-DeclChampLOpt: LDeclChamp {/*TODO*/; }
-| 			{/*TODO*/; }
+DeclChampLOpt: DeclChamp DeclChampLOpt { $1->nextParam = $2; $$ = $1;  }
+| 			 { $$ = NIL(VarDecl); }
 ;
 
-LDeclChamp: DeclChamp ';' LDeclChamp {/*TODO*/; }
-| DeclChamp {/*TODO*/; }
+LDeclChamp: DeclChamp ';' LDeclChamp { $1->nextParam = $3; $$ = $1;}
+| DeclChamp { $$ = $1; }
 ;
 
-DeclChamp: VAR Id ':' TypeC AffOpt ';' {/*TODO*/; }
+DeclChamp: VAR Id ':' TypeC AffOpt ';' { $$ = makeParam($2, $4, $5, 2); }
 ;
 
-TypeC: INTC {/*TODO*/; }    //INTC STRINGC ET VOIDC peuvent êtres traités dans Classname en les mettant dans le même environnement (qui sera rentré à la main à la compilation)
-| STRINGC {/*TODO*/; }
+TypeC: INTC { $$ = makeLeafStr(APPC, "Integer"); }    //INTC STRINGC ET VOIDC peuvent êtres traités dans Classname en les mettant dans le même environnement (qui sera rentré à la main à la compilation)
+| STRINGC { $$ = makeLeafStr(APPC, "String"); }
 | VOIDC {/*TODO*/; }
-| Classname {/*TODO*/; }
+| Classname { $$ = makeLeafStr(APPC, $1); }
 ;
 
-AffOpt: AFF Expr {/*TODO*/; }
-|
+AffOpt: AFF Expr { $$ = makeTree(AEO, 2, NIL(Tree), $2); }
+|				 { $$ = NIL(Tree); }
 ;
 
-DeclMethodeLOpt: LDeclMethode {/*TODO*/; }
-|  				{/*TODO*/; }
+DeclMethodeLOpt: DeclMethode ';' LDeclMethodeOpt { $1->nextMethode = $2; $$ = $1; }
+|  				{ $$ = NIL(Methode); }
 ;
 
-LDeclMethode: DeclMethode ';' LDeclMethode {/*TODO*/; }
-| DeclMethode {/*TODO*/; }
+DeclMethode : OverrideOpt DEF Id '(' paramLOpt ')' ':' TypeC AFF Expr { $$ = makeMethode($1, $3, $5, $8, $10, 1); }
+| OverrideOpt DEF Id '(' paramLOpt ')' TypeCOpt IS TODO Bloc { $$ = makeMethode($1, $3, $5, $7, $9, 1); }
+
 ;
 
-DeclMethode : OverrideOpt DEF Id '(' paramLOpt ')' ':' TypeC AFF Expr {/*TODO*/; }
-| OverrideOpt DEF Id '(' paramLOpt ')' TypeCOpt IS /*TODO Bloc*/ {/*TODO*/; }
+TypeCOpt: ':' TypeC { $$ = makeTree(EAPPC, 2, NIL(Tree), $2); }
+| { $$ = NIL(Tree); }
 ;
 
-TypeCOpt: ':' TypeC {/*TODO*/; }
-| {/*TODO*/; }
+OverrideOpt: OVERRIDE { $$ = TRUE; }
+|     				  { $$ = FALSE; }
 ;
 
-OverrideOpt: OVERRIDE {/*TODO*/; }
-|     				  {/*TODO*/; }
+ExtendsOpt: EXTENDS Classname '(' ListExpressionOpt ')'  { TreeP nC = makeLeafStr(APPC, $2); $$ = makeTree(EXTO, 2, nC, $4); }
+|					{ $$ = NIL(Tree); }
 ;
 
-ExtendsOpt: EXTENDS {/*TODO*/; }
-|					{/*TODO*/; }
+Expr: Id  { $$ = makeLeafStr(ECHAIN, $1); }
+| Cste { $$ = makeLeafInt(ECONST, $1); }
+| '(' Expr ')'  { $$ = makeTree(EPEXP, 2, NIL(Tree), $2); }
+| '(' Classname Expr ')' 	{ $$ = makeTree(ECAST, 2, NIL(Tree), $1); }	//Correspond à un Cast
+| Selection    { $$ = makeTree(ESEL, 2, NIL(Tree), $1); }
+| NEWC Classname '(' ExprLOpt ')' { $$ = makeTree(EINSTA, 2, NIL(Tree), $1); }   //Correspond à une Instanciation
+| Envoi  { $$ = makeTree(EENV, 2, NIL(Tree), $1); }
+| ExprOperateur { $$ = makeTree(EOPER, 2, NIL(Tree), $1); }
 ;
 
-BlocLOpt: LBloc {/*TODO*/; }
-| 				{/*TODO*/; }
+ExprLOpt: LExpr { $$ = makeTree(EEXPO, 2, NIL(Tree), $1); }
+| 				{ $$ = NIL(Tree); }
 ;
 
-LBloc: Bloc LBloc {/*TODO*/; }
-| 			      {/*TODO*/; }
+LExpr: Expr ',' LExpr { $$ = makeTree(LEXP, 2, $1, $3); }
+| Expr 			  { $$ = makeTree(EEXP, 2, NIL(Tree), $1); }
 ;
 
-Expr: Id {/*TODO*/; }
-| Cste {/*TODO*/; }
-| '(' Expr ')' {/*TODO*/; }
-| '(' Classname Expr ')' 		//Correspond à un Cast
-| Selection   /*TODO*/
-| NEWC Classname '(' ExprLOpt ')' {/*TODO*/; }   //Correspond à une Instanciation
-| Envoi {/*TODO*/; }
-| ExprOperateur {/*TODO*/; }
+ExprOperateur: Expr ADD Expr { $$ = makeTree(EADD, 2, $1, $3); }
+| Expr SUB Expr { $$ = makeTree(EMINUS, 2, $1, $3); }
+| Expr MUL Expr { $$ = makeTree(EMUL, 2, $1, $3); }
+| Expr DIV Expr  { $$ = makeTree(EQUO, 2, $1, $3); }
+| SUB Expr %prec UNARY { $$ = makeTree(EMINUS, 2, makeLeafInt(CONST, 0), $2); }
+| ADD Expr %prec UNARY { $$ = makeTree(EADD, 2, makeLeafInt(CONST, 0), $2); }      
+| Expr CONCAT Expr { $$ = makeTree(EAND, 2, $1, $3); }
+| Expr RelOp Expr 	{ $$ = makeTree($2, 2, $1, $3); }
 ;
 
-ExprLOpt: LExpr {/*TODO*/; }
-| 				{/*TODO*/; }
+Instr : Expr ';' { $$ = makeTree(EEXP, 2, NIL(Tree), $1); }
+| Bloc  {$$ = makeTree(EBLOC, 2, NIL(Tree), $1); }
+| RETURN ';' { $$ = makeLeafStr(ERET, NIL(char)); }
+| Selection AFF Expr ';' { $$ = makeTree(EAFF, 2, $1, $3); }
+| IF Expr THEN Instr ELSE Instr { $$ = makeTree(ITE, 3, $2, $4, $6); }
 ;
 
-LExpr: Expr LExpr {/*TODO*/; }
-| Expr 			  {/*TODO*/; }
+InstrLOpt: Instr InstrLOpt {$$=makeTree(ILINSTO, 2, $1, $2);}
+|  			 { $$ = NIL(Tree); }
 ;
 
-ExprOperateur: Expr ADD Expr {/*TODO*/; }
-| Expr SUB Expr {/*TODO*/; }
-| Expr MULT Expr {/*TODO*/; }
-| Expr DIV Expr {/*TODO*/; }
-| SUB Expr {/*TODO*/; }
-| ADD Expr {/*TODO*/; }             /*Voir syntaxe pour unaire*/
-| Expr CONCAT Expr {/*TODO*/; }
-| Expr RelOp Expr
-:
-
-Instr : Expr ';' {/*TODO*/; }
-| Bloc  {/*TODO*/; }
-| RETURN ';' {/*TODO*/; }
-| Selection AFF Expr ';' {/*TODO*/; }
-| IF Expr THEN Instr ELSE Instr {/*TODO*/; }
+LInstr : Instr LInstr {$$ = makeTree(LINST, 2, $1, $2);}
+| Instr		 {$$ = makeTree(EINST, 2, $1, NIL(Tree)); }
 ;
 
-
-InstrLOpt: LInstr {/*TODO*/; }
-| 							{/*TODO*/; }
+Bloc : '{' InterieurBloc '}'    { $$ = makeTree(EIB, 2, NIL(Tree), $2); }
 ;
 
-LInstr: Instr LInstr {/*TODO*/; }
-| Instr 			 {/*TODO*/; }
+Contenu : InstrLOpt  { $$ = makeTree(LINSTO, 2, NIL(Tree), $1); }
+| LDeclChamp IS LInstr { $$ = makeTree(EIS, 2, $1, $3); }
 ;
 
-Bloc: '{' InstrLOpt '}' {/*TODO*/; }
-| '{' LDeclChamp IS LInstr '}' {/*TODO*/; }
+BlocOpt: Bloc { $$ = makeTree(EBLOC, 2, NIL(Tree), $1); }
+|		 { $$ = NIL(Tree); }
 ;
 
-BlocOpt: Bloc {/*TODO*/; }
-|
-;
-
-Envoi: Expr '.' MethodeC {/*TODO*/; }
+Envoi: Expr '.' MethodeC { $$ = makeTree(EEXPA, 2, $1, $3); }
 ;
 
 MethodeC: Id '(' ExprLOpt ')'
 ;
 
-Selection: Expr '.' Id {/*TODO*/; }
-| Id 				   {/*TODO*/; }
-| THIS 				   {/*TODO*/; }
-| SUPER				   {/*TODO*/; }
-| RESULT 			   {/*TODO*/; } //RESULT peut être traité dans Id en le mettant dans le même environnement (qui sera rentré à la main à la compilation)
+Selection: Expr '.' Id { $$ = makeTree(EEXPI, 2, $1, makeLeafStr(IDVAR, $3)); }
+| Id 				   { $$ = makeLeafStr(IDVAR, $1); }
+| THIS 				   { $$ = makeLeafInt(ETHIS, 0); }
+| SUPER				   { $$ = makeLeafInt(ESUP, 0); }
+| RESULT 			   { $$ = makeLeafInt(ERES, 0); } //RESULT peut être traité dans Id en le mettant dans le même environnement (qui sera rentré à la main à la compilation)
 ;
+
