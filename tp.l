@@ -87,7 +87,7 @@ void lexError(char c) {
 "/*"({NotStar}|({Star}+{NotStarPar}))*{Star}*"*/"  { }
 {Lower}{LC}*   { return keywordOrId(); }
 {Upper}{LC}*   { return keywordOrIdC(); }
-{Guill}({BS}|{PasBSG})*{Guill}   {yylval.S = yytext; return STRINGC;}
+{Guill}({BS}|{PasBSG})*{Guill}   {yylval.S = yytext; return Classname;}
 
 . 		         { lexError(yytext[0]); }
 %%

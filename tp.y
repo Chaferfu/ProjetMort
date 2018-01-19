@@ -74,10 +74,10 @@ LDeclChamp: DeclChamp LDeclChamp {/* $1->nextParam = $3; $$ = $1;*/}
 DeclChamp: VAR Id ':' TypeC AffOpt ';' {/* $$ = makeParam($2, $4, $5, 2); */}
 ;
 
-TypeC: INTC {/* $$ = makeLeafStr(APPC, "Integer"); */}    //INTC STRINGC ET VOIDC peuvent êtres traités dans Classname en les mettant dans le même environnement (qui sera rentré à la main à la compilation)
-| STRINGC {/* $$ = makeLeafStr(APPC, "String"); */}
-| VOIDC {/*TODO; */}
-| Classname {/* $$ = makeLeafStr(APPC, $1); */}
+TypeC: INTC 		{/* $$ = makeLeafStr(APPC, "Integer"); */}    //INTC STRINGC ET VOIDC peuvent êtres traités dans Classname en les mettant dans le même environnement (qui sera rentré à la main à la compilation)
+| STRINGC 			{/* $$ = makeLeafStr(APPC, "String"); */}
+| VOIDC 			{/*TODO; */}
+| Classname 		{/* $$ = makeLeafStr(APPC, $1); */}
 ;
 
 AffOpt: AFF Expr {/* $$ = makeTree(AEO, 2, NIL(Tree), $2); */}
@@ -108,15 +108,15 @@ ExtendsOpt: EXTENDS Classname '(' LExprOpt ')'  {/* TreeP nC = makeLeafStr(APPC,
 |					{/* $$ = NIL(Tree); */}
 ;
 
-Expr: /*Id*/ /*{$$ = makeLeafStr(ECHAIN, $1); }*/
- Cste {/* $$ = makeLeafInt(ECONST, $1); */}
-| '(' Expr ')'  {/* $$ = makeTree(EPEXP, 2, NIL(Tree), $2); */}
-| '(' TypeC Expr ')' 	{/* $$ = makeTree(ECAST, 2, NIL(Tree), $1); */}	//Correspond à un Cast
-| Selection    {/* $$ = makeTree(ESEL, 2, NIL(Tree), $1); */}
-| NEWC Classname '(' LExprOpt ')' {/* $$ = makeTree(EINSTA, 2, NIL(Tree), $1); */}   //Correspond à une Instanciation
-| Envoi  {/* $$ = makeTree(EENV, 2, NIL(Tree), $1); */}
-| ExprOperateur {/* $$ = makeTree(EOPER, 2, NIL(Tree), $1); */}
-| TypeC {}
+Expr: 
+ Cste 										{/* $$ = makeLeafInt(ECONST, $1); */}
+| '(' Expr ')'  							{/* $$ = makeTree(EPEXP, 2, NIL(Tree), $2); */}
+| '(' Classname Expr ')' 					{/* $$ = makeTree(ECAST, 2, NIL(Tree), $1); */}	
+| Selection   						 		{/* $$ = makeTree(ESEL, 2, NIL(Tree), $1); */}
+| NEWC Classname 	'(' LExprOpt ')' 		{/* $$ = makeTree(EINSTA, 2, NIL(Tree), $1); */}  
+| ExprOperateur 							{/* $$ = makeTree(EOPER, 2, NIL(Tree), $1); */}
+| Envoi {}
+| Classname {}
 ;
 
 LExprOpt: LExpr {/* $$ = makeTree(EEXPO, 2, NIL(Tree), $1); */}

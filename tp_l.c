@@ -910,7 +910,7 @@ case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
 #line 90 "tp.l"
-{yylval.S = yytext; return STRINGC;}
+{yylval.S = yytext; return Classname;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
